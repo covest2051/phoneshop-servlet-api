@@ -4,85 +4,92 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 public class ArrayListProductDao implements ProductDao {
-    private long productId;
+    private static final ArrayListProductDao ARRAY_LIST_PRODUCT_DAO = new ArrayListProductDao();
+
+    private AtomicLong productId = new AtomicLong(1);
     private List<Product> products;
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public ArrayListProductDao() throws ProductNotFoundException {
+    private ArrayListProductDao() {
         this.products = new ArrayList<>();
         saveSampleProducts();
     }
 
+    public static ArrayListProductDao getArrayListProductDao() {
+        return ARRAY_LIST_PRODUCT_DAO;
+    }
+
     @Override
-    public Product getProduct(Long id) throws ProductNotFoundException {
-        synchronized (lock) {
-            lock.readLock().lock();
-            try {
-                return products.stream()
-                        .filter(product -> id.equals(product.getId()))
-                        .findAny().orElseThrow(ProductNotFoundException::new);
-            } finally {
-                lock.readLock().unlock();
-            }
+    public Optional<Product> getProduct(Long id) {
+        lock.readLock().lock();
+        try {
+            return products.stream()
+                    .filter(product -> id.equals(product.getId()))
+                    .findAny();
+        } finally {
+            lock.readLock().unlock();
         }
     }
 
     @Override
     public List<Product> findProducts() {
-        synchronized (lock) {
-            lock.readLock().lock();
-            try {
-                return products.stream()
-                        .filter(product -> product.getPrice() != null)
-                        .filter(product -> product.getStock() > 0)
-                        .collect(Collectors.toList());
-            } finally {
-                lock.readLock().unlock();
-            }
+        lock.readLock().lock();
+        try {
+            return products.stream()
+                    .filter(product -> product.getPrice() != null)
+                    .filter(product -> product.getStock() > 0)
+                    .collect(Collectors.toList());
+        } finally {
+            lock.readLock().unlock();
         }
     }
 
     @Override
-    public void save(Product product) throws ProductNotFoundException {
-        synchronized (lock) {
-            lock.writeLock().lock();
-            try {
-                if (product.getId() != null) {
-                    Product productForUpdate = getProduct(product.getId());
+    public void save(Product product) {
+        lock.writeLock().lock();
+        try {
+            if (product.getId() != null) {
+                Optional<Product> optionalProductForUpdate = getProduct(product.getId());
+                if (optionalProductForUpdate.isPresent()) {
+                    Product productForUpdate = optionalProductForUpdate.get();
                     productForUpdate.setCode(product.getCode());
                     productForUpdate.setDescription(product.getDescription());
                     productForUpdate.setPrice(product.getPrice());
                     productForUpdate.setCurrency(product.getCurrency());
                     productForUpdate.setStock(product.getStock());
                     productForUpdate.setImageUrl(product.getImageUrl());
-                } else {
-                    product.setId(productId++);
-                    products.add(product);
-                }
-            } finally {
-                lock.writeLock().unlock();
+                } else
+                    throw new NoSuchElementException("Product with ID " + product.getId() + " not found.");
+            } else {
+                product.setId(productId.incrementAndGet());
+                products.add(product);
             }
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
     @Override
-    public void delete(Long id) throws ProductNotFoundException {
-        synchronized (lock) {
-            lock.writeLock().lock();
-            try {
-                products.remove(getProduct(id));
-            } finally {
-                lock.writeLock().unlock();
-            }
+    public void delete(Long id) {
+        lock.writeLock().lock();
+        try {
+            Optional<Product> productForDelete = getProduct(id);
+            productForDelete.ifPresent(products::remove);
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
-    private void saveSampleProducts() throws ProductNotFoundException {
+
+    private void saveSampleProducts() {
         Currency usd = Currency.getInstance("USD");
         save(new Product("sgs", "Samsung Galaxy S", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg"));
         save(new Product("sgs2", "Samsung Galaxy S II", new BigDecimal(200), usd, 0, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S%20II.jpg"));

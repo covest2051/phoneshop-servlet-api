@@ -2,12 +2,12 @@ package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.ProductDao;
-import com.es.phoneshop.model.product.ProductNotFoundException;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 
 public class ProductListPageServlet extends HttpServlet {
@@ -16,11 +16,7 @@ public class ProductListPageServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        try {
-            productDao = new ArrayListProductDao();
-        } catch (ProductNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        productDao = ArrayListProductDao.getArrayListProductDao();
     }
 
     @Override
