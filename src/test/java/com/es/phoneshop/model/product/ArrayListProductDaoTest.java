@@ -36,7 +36,8 @@ public class ArrayListProductDaoTest {
 
     @Test
     public void testFindProductsNoResults() {
-        assertFalse(productDao.findProducts().isEmpty());
+        String query = null;
+        assertFalse(productDao.findProducts(query).isEmpty());
     }
 
     @Test
