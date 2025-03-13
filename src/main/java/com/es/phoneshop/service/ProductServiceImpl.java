@@ -3,6 +3,8 @@ package com.es.phoneshop.service;
 import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.model.product.SortField;
+import com.es.phoneshop.model.product.SortOrder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,13 +29,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> findProducts(String query) {
+    public List<Product> findProducts(String query, SortField sortField, SortOrder sortOrder) {
         if (query == null || query.isEmpty()) {
-            return productDao.findProducts(query);
+            return productDao.findProducts(query, sortField, sortOrder);
         }
 
         String[] splitQuery = query.split(" ");
-        return productDao.findProducts(query).stream()
+        return productDao.findProducts(query, sortField, sortOrder).stream()
                 .filter(product -> Arrays.stream(splitQuery)
                         .allMatch(word -> product.getDescription().toLowerCase().contains(word.toLowerCase())))
                 .sorted((p1, p2) -> {

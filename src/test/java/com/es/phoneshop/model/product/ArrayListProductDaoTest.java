@@ -37,7 +37,9 @@ public class ArrayListProductDaoTest {
     @Test
     public void testFindProductsNoResults() {
         String query = null;
-        assertFalse(productDao.findProducts(query).isEmpty());
+        SortField sortField = SortField.price;
+        SortOrder sortOrder = SortOrder.asc;
+        assertFalse(productDao.findProducts(query, sortField, sortOrder).isEmpty());
     }
 
     @Test
