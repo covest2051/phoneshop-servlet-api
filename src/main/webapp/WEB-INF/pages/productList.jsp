@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
-<jsp:useBean id="products" type="java.util.ArrayList" scope="request"/>
+<jsp:useBean id="products" type="java.util.List" scope="request"/>
 <tags:master pageTitle="Product List">
     <p>
         Welcome to Expert-Soft training!
@@ -18,13 +18,30 @@
             <td>Image</td>
             <td>
                 Description
-                <a href="?sort=description&order=asc">▲</a>
-                <a href="?sort=description&order=desc">▼</a>
+                <c:choose>
+                    <c:when test="${not empty param.query}">
+                        <a href="?sort=description&order=asc&query=${param.query}">▲</a>
+                        <a href="?sort=description&order=desc&query=${param.query}">▼</a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="?sort=description&order=asc">▲</a>
+                        <a href="?sort=description&order=desc">▼</a>
+                    </c:otherwise>
+                </c:choose>
             </td>
             <td class="price">
                 Price
-                <a href="?sort=price&order=asc">▲</a>
-                <a href="?sort=price&order=desc">▼</a>
+                <c:choose>
+                    <c:when test="${not empty param.query}">
+                        <a href="?sort=price&order=asc&query=${param.query}">▲</a>
+                        <a href="?sort=price&order=desc&query=${param.query}">▼</a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="?sort=price&order=asc">▲</a>
+                        <a href="?sort=price&order=desc">▼</a>
+                    </c:otherwise>
+                </c:choose>
+
             </td>
         </tr>
         </thead>
@@ -33,10 +50,16 @@
                 <td>
                     <img class="product-tile" src="${product.imageUrl}">
                 </td>
-                <td>${product.description}</td>
+                <td>
+                    <a href="/phoneshop/products/${product.id}">
+                            ${product.description}
+                    </a>
+                </td>
                 <td class="price">
-                    <fmt:formatNumber value="${product.price}" type="currency"
-                                      currencySymbol="${product.currency.symbol}"/>
+                    <a href="/phoneshop/products/priceHistory/${product.id}">
+                        <fmt:formatNumber value="${product.price}" type="currency"
+                                          currencySymbol="${product.currency.symbol}"/>
+                    </a>
                 </td>
             </tr>
         </c:forEach>

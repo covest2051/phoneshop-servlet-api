@@ -1,15 +1,18 @@
 package com.es.phoneshop.service;
 
-import com.es.phoneshop.model.product.ArrayListProductDao;
+import com.es.phoneshop.dao.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.model.product.SortField;
 import com.es.phoneshop.model.product.SortOrder;
+import com.es.phoneshop.util.ProductUtils;
+import com.es.phoneshop.model.product.SearchResult;
 
-import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
+import static com.es.phoneshop.util.ProductUtils.findQueryAndDescriptionMatch;
 
 public class ProductServiceImpl implements ProductService {
     private static final ProductServiceImpl PRODUCT_SERVICE_IMPL = new ProductServiceImpl();
@@ -19,7 +22,7 @@ public class ProductServiceImpl implements ProductService {
         this.productDao = ArrayListProductDao.getArrayListProductDao();
     }
 
-    public synchronized static ProductServiceImpl getArrayListProductDao() {
+    public synchronized static ProductServiceImpl getProductService() {
         return PRODUCT_SERVICE_IMPL;
     }
 
@@ -29,20 +32,33 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> findProducts(String query, SortField sortField, SortOrder sortOrder) {
-        if (query == null || query.isEmpty()) {
-            return productDao.findProducts(query, sortField, sortOrder);
+    public List<Product> findProducts(String query, String sortFieldStr, String sortOrderStr) {
+        SortField sortField = Optional.ofNullable(sortFieldStr)
+                .map(String::toUpperCase)
+                .map(SortField::valueOf)
+                .orElse(null);
+        SortOrder sortOrder = Optional.ofNullable(sortOrderStr)
+                .map(String::toUpperCase)
+                .map(SortOrder::valueOf)
+                .orElse(null);
+
+        List<Product> products = productDao.findProducts(query, sortField, sortOrder);
+        if(query != null && !query.isEmpty()) {
+            products = products.stream()
+                    .filter(product -> findQueryAndDescriptionMatch(query, product))
+                    .toList();
         }
 
-        String[] splitQuery = query.split(" ");
-        return productDao.findProducts(query, sortField, sortOrder).stream()
-                .filter(product -> Arrays.stream(splitQuery)
-                        .allMatch(word -> product.getDescription().toLowerCase().contains(word.toLowerCase())))
-                .sorted((p1, p2) -> {
-                    int relevance1 = getRelevance(p1, splitQuery);
-                    int relevance2 = getRelevance(p2, splitQuery);
-                    return Integer.compare(relevance1, relevance2);
-                }).collect(Collectors.toList());
+        if(query != null && !query.isEmpty() && sortField == null && sortOrderStr == null) {
+            String[] splitQuery = query.split(" ");
+            return productDao.findProducts(query, null, null).stream()
+                    .map(product -> ProductUtils.createSearchResult(product, splitQuery))
+                    .filter(searchResult -> searchResult.getRelevance() > 0)
+                    .sorted(Comparator.comparingInt(SearchResult::getRelevance).reversed())
+                    .map(SearchResult::getProduct)
+                    .toList();
+        }
+        return products;
     }
 
     @Override
@@ -51,19 +67,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void delete(Long id) {
-        productDao.delete(id);
+    public void saveAll(List<Product> products) {
+        productDao.saveAll(products);
     }
 
-    private int getRelevance(Product product, String[] splitQuery) {
-        String productDescription = product.getDescription().toLowerCase();
-        int descriptionLength = productDescription.split(" ").length;
-        int relevance = 0;
-
-        for (String word : splitQuery) {
-            if (productDescription.contains(word.toLowerCase()))
-                relevance++;
-        }
-        return descriptionLength - relevance;
+    @Override
+    public void delete(Long id) {
+        productDao.delete(id);
     }
 }
