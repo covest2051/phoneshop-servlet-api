@@ -1,7 +1,7 @@
 package com.es.phoneshop.model.product;
 
-import com.es.phoneshop.service.ProductService;
-import com.es.phoneshop.service.ProductServiceImpl;
+import com.es.phoneshop.service.productService.ProductService;
+import com.es.phoneshop.service.productService.ProductServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 
