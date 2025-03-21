@@ -47,16 +47,16 @@
                 <td>Quantity</td>
                 <td class="quantity">
                     <input type="number" name="quantity" value=${not empty param.quantity ? param.quantity : 1}>
-                    <c:if test="${not empty error}">
-                        <p class="error">${error}</p>
+                    <c:if test="${not empty param.error}">
+                        <p class="error">${param.error}</p>
                     </c:if>
                 </td>
             </tr>
         </table>
         <p>
             <button>Add to cart</button>
-            <c:if test="${not empty success}">
-                <p class="success">${success}</p>
+            <c:if test="${not empty param.success}">
+                <p class="success">${param.success}</p>
             </c:if>
         </p>
     </form>

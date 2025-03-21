@@ -64,4 +64,23 @@
             </tr>
         </c:forEach>
     </table>
+    <c:if test="${not empty sessionScope.viewHistory}">
+        <h2>Recently viewed</h2>
+        <table>
+            <tr>
+                <c:forEach var="product" items="${sessionScope.viewHistory}">
+                    <td style="text-align: center; vertical-align: top;">
+                        <img class="product-tile" src="${product.imageUrl}"/><br/>
+                        <a href="/phoneshop/products/${product.id}">
+                                ${product.description}
+                        </a><br/>
+                        <a href="/phoneshop/products/priceHistory/${product.id}">
+                            <fmt:formatNumber value="${product.price}" type="currency"
+                                              currencySymbol="${product.currency.symbol}"/>
+                        </a>
+                    </td>
+                </c:forEach>
+            </tr>
+        </table>
+    </c:if>
 </tags:master>

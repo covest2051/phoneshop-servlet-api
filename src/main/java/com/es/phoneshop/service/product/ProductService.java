@@ -1,4 +1,4 @@
-package com.es.phoneshop.service.productService;
+package com.es.phoneshop.service.product;
 
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.SortField;

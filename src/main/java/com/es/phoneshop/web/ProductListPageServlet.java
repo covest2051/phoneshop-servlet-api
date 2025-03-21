@@ -1,7 +1,7 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.service.productService.ProductService;
-import com.es.phoneshop.service.productService.ProductServiceImpl;
+import com.es.phoneshop.service.product.ProductService;
+import com.es.phoneshop.service.product.ProductServiceImpl;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;

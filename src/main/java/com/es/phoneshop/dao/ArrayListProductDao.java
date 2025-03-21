@@ -6,7 +6,6 @@ import com.es.phoneshop.model.product.SortField;
 import com.es.phoneshop.model.product.SortOrder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -16,8 +15,6 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import static com.es.phoneshop.util.ProductUtils.findQueryAndDescriptionMatch;
 
 public class ArrayListProductDao implements ProductDao {
     private static final ArrayListProductDao ARRAY_LIST_PRODUCT_DAO = new ArrayListProductDao();

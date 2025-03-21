@@ -4,10 +4,11 @@ import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.OutOfStockException;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductNotFoundException;
-import com.es.phoneshop.service.cartService.CartService;
-import com.es.phoneshop.service.cartService.CartServiceImpl;
-import com.es.phoneshop.service.productService.ProductService;
-import com.es.phoneshop.service.productService.ProductServiceImpl;
+import com.es.phoneshop.service.cart.CartService;
+import com.es.phoneshop.service.cart.CartServiceImpl;
+import com.es.phoneshop.service.product.ProductService;
+import com.es.phoneshop.service.product.ProductServiceImpl;
+import com.es.phoneshop.service.product.ViewHistoryServiceImpl;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -17,18 +18,20 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.Locale;
 import java.util.Optional;
 
 public class ProductDetailsPageServlet extends HttpServlet {
     private ProductService productService;
     private CartService cartService;
+    private ViewHistoryServiceImpl viewHistoryService;
+
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         productService = ProductServiceImpl.getProductService();
         cartService = CartServiceImpl.getCartService();
+        viewHistoryService = ViewHistoryServiceImpl.getViewHistoryService();
     }
 
     @Override
@@ -41,6 +44,8 @@ public class ProductDetailsPageServlet extends HttpServlet {
                 .orElseThrow(ProductNotFoundException::new);
 
         request.setAttribute("cart", cartService.getCart(request));
+
+        viewHistoryService.viewHistory(optionalProduct.get(), request);
 
         request.getRequestDispatcher("/WEB-INF/pages/product.jsp").forward(request, response);
     }
@@ -68,8 +73,8 @@ public class ProductDetailsPageServlet extends HttpServlet {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         } catch (OutOfStockException e) {
-            request.setAttribute("error", "Not enough stock, available " + e.getStockAvailable());
-            request.getRequestDispatcher("/WEB-INF/pages/product.jsp").forward(request, response);
+            int productQuantityInCart = cartService.getProductQuantityInCart(cart, optionalProduct.get().getId());
+            response.sendRedirect(request.getContextPath() + "/products" + productId + "?error=Not enough stock, available to buy: " + (e.getStockAvailable() - productQuantityInCart));
             return;
         }
         response.sendRedirect(request.getContextPath() + "/products" + productId + "?message=Product added to cart");
