@@ -2,13 +2,14 @@ package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductNotFoundException;
-import com.es.phoneshop.service.ProductService;
-import com.es.phoneshop.service.ProductServiceImpl;
+import com.es.phoneshop.service.product.ProductService;
+import com.es.phoneshop.service.product.ProductServiceImpl;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,14 +35,18 @@ public class ProductDetailsPageServletTest {
     private RequestDispatcher requestDispatcher;
     @Mock
     private ServletConfig servletConfig;
+    @Mock
+    private HttpSession session;
+    @Mock
+    private ProductService productService;
 
     private ProductDetailsPageServlet servlet = new ProductDetailsPageServlet();
-    private ProductService productService;
 
     @Before
     public void setup() throws ServletException {
         servlet.init(servletConfig);
         when(request.getRequestDispatcher(any(String.class))).thenReturn(requestDispatcher);
+        when(request.getSession()).thenReturn(session);
         productService = ProductServiceImpl.getProductService();
     }
 

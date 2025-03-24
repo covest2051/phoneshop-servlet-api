@@ -2,8 +2,8 @@ package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductNotFoundException;
-import com.es.phoneshop.service.ProductService;
-import com.es.phoneshop.service.ProductServiceImpl;
+import com.es.phoneshop.service.product.ProductService;
+import com.es.phoneshop.service.product.ProductServiceImpl;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
