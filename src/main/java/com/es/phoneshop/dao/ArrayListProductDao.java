@@ -92,8 +92,9 @@ public class ArrayListProductDao implements ProductDao {
                     productForUpdate.setCurrency(product.getCurrency());
                     productForUpdate.setStock(product.getStock());
                     productForUpdate.setImageUrl(product.getImageUrl());
-                } else
+                } else {
                     throw new NoSuchElementException("Product with ID " + product.getId() + " not found.");
+                }
             } else {
                 product.setId(productId.incrementAndGet());
                 products.add(product);
