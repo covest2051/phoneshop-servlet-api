@@ -37,34 +37,22 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public synchronized void add(Cart cart, Long productId, int quantity) throws OutOfStockException {
-//        productService.getProduct(productId)
-//                .ifPresent(product -> cart.getItems().stream()
-//                        .filter(cartItem -> cartItem.getProduct().equals(product)).findFirst().
-//                        ifPresent(cartItem -> {
-//                    try {
-//                        update(cart, productId, quantity);
-//                    } catch (OutOfStockException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                }));
+        productService.getProduct(productId)
+                .ifPresent(product -> {
+                    Optional<CartItem> optionalCartItem = cart.getItems().stream()
+                            .filter(cartItem -> cartItem.getProduct().equals(product))
+                            .findFirst();
 
-        Optional<Product> productForAdding = productService.getProduct(productId);
+                    if (optionalCartItem.isPresent()) {
+                        int productsInCartCount = optionalCartItem.get().getQuantity();
+                        if (product.getStock() - productsInCartCount < quantity)
+                            throw new OutOfStockException(product, quantity, product.getStock());
 
-        if (productForAdding.isPresent()) {
-            Product product = productForAdding.get();
-            Optional<CartItem> existedCartItem = cart.getItems().stream()
-                    .filter(cartItem -> cartItem.getProduct().equals(product))
-                    .findFirst();
-            if (existedCartItem.isPresent()) {
-                int productsInCartCount = existedCartItem.get().getQuantity();
-                if (product.getStock() - productsInCartCount < quantity)
-                    throw new OutOfStockException(product, quantity, product.getStock());
-
-                existedCartItem.get().setQuantity(existedCartItem.get().getQuantity() + quantity);
-            } else {
-                cart.getItems().add(new CartItem(productForAdding.get(), quantity));
-            }
-        }
+                        optionalCartItem.get().setQuantity(optionalCartItem.get().getQuantity() + quantity);
+                    } else {
+                        cart.getItems().add(new CartItem(product, quantity));
+                    }
+                });
         recalculateCartCost(cart);
         recalculateCartTotalQuantity(cart);
     }

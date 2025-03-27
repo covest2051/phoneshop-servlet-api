@@ -2,8 +2,6 @@ package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.OutOfStockException;
-import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductNotFoundException;
 import com.es.phoneshop.service.cart.CartService;
 import com.es.phoneshop.service.cart.CartServiceImpl;
 import jakarta.servlet.ServletConfig;
@@ -17,7 +15,6 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class CartPageServlet extends HttpServlet {
     private CartService cartService;
@@ -55,7 +52,7 @@ public class CartPageServlet extends HttpServlet {
             }
         }
 
-        if(errors.isEmpty()) {
+        if (errors.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/cart?message=Cart  updated successfully");
         } else {
 
@@ -67,10 +64,10 @@ public class CartPageServlet extends HttpServlet {
     }
 
     private void handleFailure(Map<Long, String> errors, Long productId, Exception exception) {
-        if(exception.getClass().equals(ParseException.class)) {
+        if (exception.getClass().equals(ParseException.class)) {
             errors.put(productId, "Not a number");
         } else {
-            if(((OutOfStockException)exception).getStockRequested() <= 0) {
+            if (((OutOfStockException) exception).getStockRequested() <= 0) {
                 errors.put(productId, "Can`t be negative or zero");
             } else {
                 errors.put(productId, "Out of stock, max available in your cart: " + ((OutOfStockException) exception).getStockAvailable());
