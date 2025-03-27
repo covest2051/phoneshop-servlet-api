@@ -25,7 +25,6 @@ public class ProductDetailsPageServlet extends HttpServlet {
     private CartService cartService;
     private ViewHistoryServiceImpl viewHistoryService;
 
-
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -51,20 +50,16 @@ public class ProductDetailsPageServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String productId = request.getPathInfo();
-        String quantityStr = request.getParameter("quantity");
 
         Optional<Product> optionalProduct = productService.getProduct(Long.valueOf(productId.substring(1)));
 
         optionalProduct
                 .map(p -> setProductAttribute(p, request))
                 .orElseThrow(ProductNotFoundException::new);
-
-
-        request.setAttribute("cart", cartService.getCart(request));
-        int quantity = Integer.parseInt(quantityStr);
-
+        String quantityStr = request.getParameter("quantity");
+        int quantity;
         Cart cart = cartService.getCart(request);
         try {
             NumberFormat format = NumberFormat.getInstance(request.getLocale());

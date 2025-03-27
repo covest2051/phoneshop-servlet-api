@@ -2,8 +2,6 @@ package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.OutOfStockException;
-import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductNotFoundException;
 import com.es.phoneshop.service.cart.CartService;
 import com.es.phoneshop.service.cart.CartServiceImpl;
 import jakarta.servlet.ServletConfig;
@@ -11,13 +9,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class CartPageServlet extends HttpServlet {
     private CartService cartService;
@@ -31,13 +29,20 @@ public class CartPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        setCartAttribute(request);
+        HttpSession session = request.getSession();
 
+        Map<Long, String> errors = (Map<Long, String>) session.getAttribute("errors");
+
+        if (errors != null) {
+            request.setAttribute("errors", errors);
+            session.removeAttribute("errors");
+        }
+        setCartAttribute(request);
         request.getRequestDispatcher("/WEB-INF/pages/cart.jsp").forward(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String[] productIds = request.getParameterValues("productId");
         String[] quantities = request.getParameterValues("quantity");
 
@@ -46,36 +51,45 @@ public class CartPageServlet extends HttpServlet {
         for (int i = 0; i < productIds.length; i++) {
             Long productId = Long.valueOf(productIds[i]);
 
-            int quantity;
             try {
-                quantity = getQuantity(quantities[i], request);
+                int quantity = getQuantity(quantities[i], request);
+                if (quantity <= 0) {
+                    errors.put(productId, "Can't be negative or zero");
+                    continue;
+                }
                 cartService.update(cart, productId, quantity);
-            } catch (ParseException | OutOfStockException exception) {
-                handleFailure(errors, productId, exception);
+            } catch (ParseException exception) {
+                handleFailure(errors, productId, "Not a number");
+            } catch (OutOfStockException exception) {
+                if (exception.getStockRequested() <= 0) {
+                    handleFailure(errors, productId, "Can't be negative or zero");
+                } else {
+                    handleFailure(errors, productId, "Out of stock, max available in your cart: " + exception.getStockAvailable());
+                }
             }
         }
 
-        if(errors.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/cart?message=Cart  updated successfully");
+        HttpSession session = request.getSession();
+        if (errors.isEmpty()) {
+            session.setAttribute("message", "Cart updated successfully");
         } else {
-
-            request.setAttribute("errors", errors);
-            setCartAttribute(request);
-
-            request.getRequestDispatcher("/WEB-INF/pages/cart.jsp").forward(request, response);
+            session.setAttribute("errors", errors);
         }
+        response.sendRedirect(request.getContextPath() + "/cart");
     }
 
-    private void handleFailure(Map<Long, String> errors, Long productId, Exception exception) {
-        if(exception.getClass().equals(ParseException.class)) {
-            errors.put(productId, "Not a number");
-        } else {
-            if(((OutOfStockException)exception).getStockRequested() <= 0) {
-                errors.put(productId, "Can`t be negative or zero");
-            } else {
-                errors.put(productId, "Out of stock, max available in your cart: " + ((OutOfStockException) exception).getStockAvailable());
-            }
-        }
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Cart cart = cartService.getCart(request);
+        String productId = request.getParameter("productId");
+
+        cartService.delete(cart, Long.valueOf(productId));
+
+        response.sendRedirect(request.getContextPath() + "/cart?message=Cart item removed successfully");
+    }
+
+    private void handleFailure(Map<Long, String> errors, Long productId, String message) {
+        errors.put(productId, message);
     }
 
     private void setCartAttribute(HttpServletRequest request) {
