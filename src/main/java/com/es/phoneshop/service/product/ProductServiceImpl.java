@@ -82,6 +82,7 @@ public class ProductServiceImpl implements ProductService {
         product.setRating(feedbackList.stream()
                 .mapToDouble(Feedback::getRating)
                 .average().orElse(0.0));
+        save(product);
     }
 
     @Override

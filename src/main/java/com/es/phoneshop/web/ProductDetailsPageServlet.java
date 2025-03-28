@@ -36,7 +36,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
         productService = ProductServiceImpl.getInstance();
         cartService = CartServiceImpl.getInstance();
         viewHistoryService = ViewHistoryServiceImpl.getInstance();
-        feedbackService = FeedbackServiceImpl.getFeedbackService();
+        feedbackService = FeedbackServiceImpl.getInstance();
     }
 
     @Override
@@ -74,7 +74,6 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
         String quantityStr = request.getParameter("quantity");
         int quantity;
-
         Cart cart = cartService.getCart(request);
         try {
             NumberFormat format = NumberFormat.getInstance(request.getLocale());
@@ -83,7 +82,6 @@ public class ProductDetailsPageServlet extends HttpServlet {
             if (quantity <= 0) {
                 throw new IllegalArgumentException();
             }
-
             cartService.add(cart, Long.valueOf(productId.substring(1)), quantity);
         } catch (ParseException e) {
             throw new RuntimeException(e);

@@ -10,10 +10,10 @@ import java.util.Map;
 import java.util.Optional;
 
 public class FeedbackServiceImpl implements FeedbackService {
-    private static final FeedbackServiceImpl FEEDBACK_SERVICE = new FeedbackServiceImpl();
+    private static final FeedbackServiceImpl INSTANCE = new FeedbackServiceImpl();
 
-    public synchronized static FeedbackServiceImpl getFeedbackService() {
-        return FEEDBACK_SERVICE;
+    public synchronized static FeedbackServiceImpl getInstance() {
+        return INSTANCE;
     }
 
     private final Map<FeedbackSortField, Comparator<Feedback>> comparators = Map.of(
@@ -35,6 +35,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         if (sortField == null) {
             return feedbackList;
         }
+
         comparator = comparators.get(sortField);
 
         if (sortOrder == SortOrder.DESC) {

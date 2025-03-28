@@ -69,6 +69,7 @@ public class Product extends GenericEntity implements Serializable, Copyable<Pro
         this.imageUrl = other.imageUrl;
         this.priceHistory = other.priceHistory;
         this.feedbackList = other.feedbackList;
+        this.rating = other.rating;
     }
 
     public String getCode() {

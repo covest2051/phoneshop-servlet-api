@@ -38,13 +38,13 @@ public class ReviewServlet extends HttpServlet {
 
         Feedback feedback = new Feedback(userReview, Double.parseDouble(ratingStr));
 
-        optionalProduct
-                .map(product -> setProductAttribute(product, request))
-                .orElseThrow(ProductNotFoundException::new);
-
         optionalProduct.ifPresent(product -> {
             productService.addFeedback(product, feedback);
         });
+
+        optionalProduct
+                .map(product -> setProductAttribute(product, request))
+                .orElseThrow(ProductNotFoundException::new);
 
         response.sendRedirect(request.getContextPath() + "/products" + productId + "?message=Review added successfully");
     }
