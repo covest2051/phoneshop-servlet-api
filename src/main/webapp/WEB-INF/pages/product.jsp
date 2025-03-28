@@ -79,12 +79,30 @@
     <h2>Other users rate</h2>
     <c:choose>
         <c:when test="${not empty product.feedbackList}">
-            <c:forEach var="feedback" items="${product.feedbackList}">
-                <div class="review ${feedback.rating <= 2 ? 'bad' : 'good'}">
-                    <p>Rating: ${feedback.rating}</p>
-                    <p>${feedback.text}</p>
-                </div><br>
-            </c:forEach>
+            <table>
+                <thead>
+                <tr>
+                    <td>
+                        Rating
+                        <a href="?sort=rating&order=asc">▲</a>
+                        <a href="?sort=rating&order=desc">▼</a>
+                    </td>
+                    <td>
+                        Text
+                    </td>
+                </tr>
+                </thead>
+                <c:forEach var="feedback" items="${feedbackList}">
+                    <tr>
+                        <td class="review ${feedback.rating <= 2 ? 'bad' : 'good'}">
+                            <p>${feedback.rating}</p>
+                        </td>
+                        <td>
+                            <p>${feedback.text}</p>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </table>
         </c:when>
         <c:otherwise>
             <p>No other users rates yet</p>

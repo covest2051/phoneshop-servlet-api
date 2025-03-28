@@ -1,6 +1,8 @@
 package com.es.phoneshop.model.product;
 
-public class Feedback {
+import java.io.Serializable;
+
+public class Feedback implements Serializable {
     private double rating;
 
     private String text;
