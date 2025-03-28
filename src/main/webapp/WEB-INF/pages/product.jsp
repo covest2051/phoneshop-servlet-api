@@ -10,7 +10,7 @@
     </p>
     <c:if test="${not empty param.message}">
         <div class="success">
-            ${param.message}
+                ${param.message}
         </div>
     </c:if>
     <p>
@@ -56,8 +56,38 @@
         <p>
             <button>Add to cart</button>
             <c:if test="${not empty param.success}">
-                <p class="success">${param.success}</p>
-            </c:if>
+        <p class="success">${param.success}</p>
+        </c:if>
         </p>
     </form>
+    <h2>Rating</h2>
+    <form method="post" action="${pageContext.request.contextPath}/products/${product.id}">
+        <input type="hidden" name="action" value="addReview">
+        <textarea id="userReview" name="userReview" rows="5" cols="40" required></textarea><br>
+        <p>Your rate:</p>
+        <select id="rating" name="rating" required>
+            <option value="5">5 - Отлично</option>
+            <option value="4">4 - Хорошо</option>
+            <option value="3">3 - Нормально</option>
+            <option value="2">2 - Плохо</option>
+            <option value="1">1 - Ужасно</option>
+        </select><br><br>
+
+        <button type="submit">Send feedback</button>
+    </form>
+
+    <h2>Other users rate</h2>
+    <c:choose>
+        <c:when test="${not empty product.feedbackList}">
+            <c:forEach var="feedback" items="${product.feedbackList}">
+                <div class="review ${feedback.rating <= 2 ? 'bad' : 'good'}">
+                    <p>Rating: ${feedback.rating}</p>
+                    <p>${feedback.text}</p>
+                </div><br>
+            </c:forEach>
+        </c:when>
+        <c:otherwise>
+            <p>No other users rates yet</p>
+        </c:otherwise>
+    </c:choose>
 </tags:master>
