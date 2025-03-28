@@ -23,6 +23,8 @@ public class Product implements Serializable {
     private int stock;
     private String imageUrl;
     private List<PriceHistory> priceHistory;
+    private List<Feedback> feedbackList;
+    private double rating;
 
     public Product() {
     }
@@ -38,6 +40,7 @@ public class Product implements Serializable {
         this.imageUrl = imageUrl;
         this.priceHistory = new ArrayList<>();
         this.priceHistory.add(new PriceHistory(new Date(), price));
+        feedbackList = new ArrayList<>();
     }
 
     public Product(String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl) {
@@ -50,6 +53,7 @@ public class Product implements Serializable {
         this.imageUrl = imageUrl;
         this.priceHistory = new ArrayList<>();
         this.priceHistory.add(new PriceHistory(new Date(), price));
+        feedbackList = new ArrayList<>();
     }
 
     // c-tor копирования
@@ -62,6 +66,7 @@ public class Product implements Serializable {
         this.stock = other.stock;
         this.imageUrl = other.imageUrl;
         this.priceHistory = other.priceHistory;
+        this.feedbackList = other.feedbackList;
     }
 
     public Long getId() {
@@ -126,6 +131,22 @@ public class Product implements Serializable {
 
     public void setPriceHistory(List<PriceHistory> priceHistory) {
         this.priceHistory = priceHistory;
+    }
+
+    public void setFeedbackList(List<Feedback> feedbackList) {
+        this.feedbackList = feedbackList;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public List<Feedback> getFeedbackList() {
+        return feedbackList;
+    }
+
+    public double getRating() {
+        return rating;
     }
 
     @Override

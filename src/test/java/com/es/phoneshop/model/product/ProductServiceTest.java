@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyString;
 
 public class ProductServiceTest {
     private ProductService productService;
@@ -112,5 +113,24 @@ public class ProductServiceTest {
         assertFalse(searchResults.isEmpty());
         assertTrue(searchResults.contains(product1));
         assertTrue(searchResults.contains(product2));
+    }
+
+    @Test
+    public void testAddFeedback() {
+        Currency usd = Currency.getInstance("USD");
+        Product product = new Product("test-product-code1", "Samsung Galaxy S I", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
+        assertEquals(0, product.getFeedbackList().size());
+        productService.addFeedback(product, new Feedback(anyString(), 5.0));
+        assertEquals(1, product.getFeedbackList().size());
+    }
+
+    @Test
+    public void testRecalculateProductRating() {
+        Currency usd = Currency.getInstance("USD");
+        Product product = new Product("test-product-code1", "Samsung Galaxy S I", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
+        productService.addFeedback(product, new Feedback(anyString(), 5.0));
+        assertEquals(5.0, product.getRating(), 0.001);
+        productService.addFeedback(product, new Feedback(anyString(), 1.0));
+        assertEquals(3.0, product.getRating(), 0.001);
     }
 }
