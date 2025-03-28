@@ -61,8 +61,7 @@
         </p>
     </form>
     <h2>Rating</h2>
-    <form method="post" action="${pageContext.request.contextPath}/products/${product.id}">
-        <input type="hidden" name="action" value="addReview">
+    <form method="post" action="${pageContext.request.contextPath}/products/reviews/${product.id}">
         <textarea id="userReview" name="userReview" rows="5" cols="40" required></textarea><br>
         <p>Your rate:</p>
         <select id="rating" name="rating" required>
@@ -79,12 +78,30 @@
     <h2>Other users rate</h2>
     <c:choose>
         <c:when test="${not empty product.feedbackList}">
-            <c:forEach var="feedback" items="${product.feedbackList}">
-                <div class="review ${feedback.rating <= 2 ? 'bad' : 'good'}">
-                    <p>Rating: ${feedback.rating}</p>
-                    <p>${feedback.text}</p>
-                </div><br>
-            </c:forEach>
+            <table>
+                <thead>
+                <tr>
+                    <td>
+                        Rating
+                        <a href="?sort=rating&order=asc">▲</a>
+                        <a href="?sort=rating&order=desc">▼</a>
+                    </td>
+                    <td>
+                        Text
+                    </td>
+                </tr>
+                </thead>
+                <c:forEach var="feedback" items="${feedbackList}">
+                    <tr>
+                        <td class="review ${feedback.rating <= 2 ? 'bad' : 'good'}">
+                            <p>${feedback.rating}</p>
+                        </td>
+                        <td>
+                            <p>${feedback.text}</p>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </table>
         </c:when>
         <c:otherwise>
             <p>No other users rates yet</p>
