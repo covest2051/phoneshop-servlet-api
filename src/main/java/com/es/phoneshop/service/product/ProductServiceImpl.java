@@ -2,6 +2,7 @@ package com.es.phoneshop.service.product;
 
 import com.es.phoneshop.dao.product.ArrayListProductDao;
 import com.es.phoneshop.dao.product.ProductDao;
+import com.es.phoneshop.model.product.Feedback;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.SearchResult;
 import com.es.phoneshop.model.product.SortField;
@@ -74,5 +75,18 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void delete(Long id) {
         productDao.delete(id);
+    }
+
+    @Override
+    public void recalculateProductRating(Product product, List<Feedback> feedbackList) {
+        product.setRating(feedbackList.stream()
+                .mapToDouble(Feedback::getRating)
+                .average().orElse(0.0));
+    }
+
+    @Override
+    public void addFeedback(Product product, Feedback feedback) {
+        product.getFeedbackList().add(feedback);
+        recalculateProductRating(product, product.getFeedbackList());
     }
 }

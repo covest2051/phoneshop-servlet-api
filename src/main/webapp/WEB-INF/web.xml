@@ -44,6 +44,8 @@
         <url-pattern>/products/priceHistory/*</url-pattern>
     </servlet-mapping>
 
+
+
     <servlet>
         <servlet-name>CartPageServlet</servlet-name>
         <servlet-class>com.es.phoneshop.web.CartPageServlet</servlet-class>
@@ -62,6 +64,16 @@
     <servlet-mapping>
         <servlet-name>minicart</servlet-name>
         <url-pattern>/cart/minicart</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ReviewServlet</servlet-name>
+        <servlet-class>com.es.phoneshop.web.ReviewServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ReviewServlet</servlet-name>
+        <url-pattern>/products/reviews/*</url-pattern>
     </servlet-mapping>
 
     <servlet>

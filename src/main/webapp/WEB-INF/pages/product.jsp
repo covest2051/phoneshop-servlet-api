@@ -62,4 +62,51 @@
         </c:if>
         </p>
     </form>
+    <h2>Rating</h2>
+    <form method="post" action="${pageContext.request.contextPath}/products/reviews/${product.id}">
+        <textarea id="userReview" name="userReview" rows="5" cols="40" required></textarea><br>
+        <p>Your rate:</p>
+        <select id="rating" name="rating" required>
+            <option value="5">5 - Отлично</option>
+            <option value="4">4 - Хорошо</option>
+            <option value="3">3 - Нормально</option>
+            <option value="2">2 - Плохо</option>
+            <option value="1">1 - Ужасно</option>
+        </select><br><br>
+
+        <button type="submit">Send feedback</button>
+    </form>
+
+    <h2>Other users rate</h2>
+    <c:choose>
+        <c:when test="${not empty product.feedbackList}">
+            <table>
+                <thead>
+                <tr>
+                    <td>
+                        Rating
+                        <a href="?sort=rating&order=asc">▲</a>
+                        <a href="?sort=rating&order=desc">▼</a>
+                    </td>
+                    <td>
+                        Text
+                    </td>
+                </tr>
+                </thead>
+                <c:forEach var="feedback" items="${feedbackList}">
+                    <tr>
+                        <td class="review ${feedback.rating <= 2 ? 'bad' : 'good'}">
+                            <p>${feedback.rating}</p>
+                        </td>
+                        <td>
+                            <p>${feedback.text}</p>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </c:when>
+        <c:otherwise>
+            <p>No other users rates yet</p>
+        </c:otherwise>
+    </c:choose>
 </tags:master>
