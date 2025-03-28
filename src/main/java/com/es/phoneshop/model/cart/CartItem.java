@@ -31,8 +31,7 @@ public class CartItem implements Serializable {
 
     @Override
     public String toString() {
-        return "product=" + product.getCode() +
-                ", quantity=" + quantity +
-                " ";
+        return product.getDescription() +
+                ", quantity=" + quantity;
     }
 }

@@ -51,7 +51,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String productId = request.getPathInfo();
         String quantityStr = request.getParameter("quantity");
 
@@ -61,8 +61,6 @@ public class ProductDetailsPageServlet extends HttpServlet {
                 .map(p -> setProductAttribute(p, request))
                 .orElseThrow(ProductNotFoundException::new);
 
-
-        request.setAttribute("cart", cartService.getCart(request));
         int quantity = Integer.parseInt(quantityStr);
 
         Cart cart = cartService.getCart(request);

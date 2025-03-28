@@ -41,7 +41,9 @@
                         <a href="?sort=price&order=desc">▼</a>
                     </c:otherwise>
                 </c:choose>
-
+            </td>
+            <td>
+                Quantity
             </td>
         </tr>
         </thead>
@@ -60,6 +62,12 @@
                         <fmt:formatNumber value="${product.price}" type="currency"
                                           currencySymbol="${product.currency.symbol}"/>
                     </a>
+                </td>
+                <td>
+                    <form method="post" action="${pageContext.request.contextPath}/products/${product.id}">
+                        <input type="number" name="quantity" value="1">
+                        <button type="submit">Add to cart</button>
+                    </form>
                 </td>
             </tr>
         </c:forEach>

@@ -29,7 +29,7 @@ public class PriceHistoryPageServlet extends HttpServlet {
 
         optionalProduct.ifPresentOrElse(
                 product -> handleSuccess(product, request),
-                () -> handleFailure());
+                this::handleFailure);
 
         request.getRequestDispatcher("/WEB-INF/pages/priceHistory.jsp").forward(request, response);
     }

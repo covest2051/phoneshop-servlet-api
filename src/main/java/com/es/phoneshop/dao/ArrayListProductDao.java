@@ -10,7 +10,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -80,20 +79,7 @@ public class ArrayListProductDao implements ProductDao {
         lock.writeLock().lock();
         try {
             if (product.getId() != null) {
-                Optional<Product> optionalProductForUpdate = getProduct(product.getId());
-                if (optionalProductForUpdate.isPresent()) {
-                    Product productForUpdate = optionalProductForUpdate.get();
-                    if (!product.getPrice().equals(productForUpdate.getPrice())) {
-                        productForUpdate.getPriceHistory().add(new PriceHistory(new Date(), product.getPrice()));
-                    }
-                    productForUpdate.setCode(product.getCode());
-                    productForUpdate.setDescription(product.getDescription());
-                    productForUpdate.setPrice(product.getPrice());
-                    productForUpdate.setCurrency(product.getCurrency());
-                    productForUpdate.setStock(product.getStock());
-                    productForUpdate.setImageUrl(product.getImageUrl());
-                } else
-                    throw new NoSuchElementException("Product with ID " + product.getId() + " not found.");
+                update(product);
             } else {
                 product.setId(productId.incrementAndGet());
                 products.add(product);
@@ -101,6 +87,20 @@ public class ArrayListProductDao implements ProductDao {
         } finally {
             lock.writeLock().unlock();
         }
+    }
+
+    private void update(Product newProduct) {
+        getProduct(newProduct.getId()).ifPresent(oldProduct -> {
+            if (!newProduct.getPrice().equals(oldProduct.getPrice())) {
+                oldProduct.getPriceHistory().add(new PriceHistory(new Date(), newProduct.getPrice()));
+            }
+            oldProduct.setCode(newProduct.getCode());
+            oldProduct.setDescription(newProduct.getDescription());
+            oldProduct.setPrice(newProduct.getPrice());
+            oldProduct.setCurrency(newProduct.getCurrency());
+            oldProduct.setStock(newProduct.getStock());
+            oldProduct.setImageUrl(newProduct.getImageUrl());
+        });
     }
 
     @Override
