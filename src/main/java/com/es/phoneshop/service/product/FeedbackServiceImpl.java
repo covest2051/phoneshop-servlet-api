@@ -38,7 +38,6 @@ public class FeedbackServiceImpl implements FeedbackService {
         if (sortField == null) {
             return feedbackList;
         }
-
         comparator = comparators.get(sortField);
 
         if (sortOrder == SortOrder.DESC) {
