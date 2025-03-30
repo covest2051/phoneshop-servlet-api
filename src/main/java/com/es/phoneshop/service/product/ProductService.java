@@ -1,5 +1,6 @@
 package com.es.phoneshop.service.product;
 
+import com.es.phoneshop.model.product.Feedback;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.SortField;
 import com.es.phoneshop.model.product.SortOrder;
@@ -17,4 +18,8 @@ public interface ProductService {
     void saveAll(List<Product> products);
 
     void delete(Long id);
+
+    void recalculateProductRating(Product product, List<Feedback> feedbackList);
+
+    void addFeedback(Product product, Feedback feedback);
 }

@@ -40,3 +40,11 @@ body.product-list {
 .success {
   color: green;
 }
+
+.bad {
+  color: red;
+}
+
+.good {
+  color: green;
+}

@@ -66,7 +66,9 @@
                         <input type="hidden" value="${item.product.id}" name="productId">
                     </td>
                     <td>
-                        <button form="deleteCartItem" formaction="${pageContext.servletContext.contextPath}/cart/deleteCartItem/${item.product.id}">✕</button>
+                        <button type="submit" formaction="${pageContext.servletContext.contextPath}/cart"
+                                formmethod="post" name="method" value="DELETE">✕</button>
+                        <input type="hidden" name="productId" value="${item.product.id}" form="deleteForm-${status.index}">
                     </td>
                 </tr>
             </c:forEach>
@@ -84,6 +86,5 @@
             <button>Update</button>
         </p>
     </form>
-    <form id="deleteCartItem" method="post"></form>
     <a href="/phoneshop/products">Back to products</a>
 </tags:master>
