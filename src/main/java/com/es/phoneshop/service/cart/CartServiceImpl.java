@@ -39,56 +39,43 @@ public class CartServiceImpl implements CartService {
     public void add(Cart cart, Long productId, int quantity) throws OutOfStockException {
         synchronized (cart) {
             productService.getProduct(productId)
-                    .ifPresent(product -> {
-                        Optional<CartItem> optionalCartItem = cart.getItems().stream()
-                                .filter(cartItem -> cartItem.getProduct().equals(product))
-                                .findFirst();
-
-                        if (optionalCartItem.isPresent()) {
-                            updateCartItem(optionalCartItem.get(), product, quantity);
-                        } else {
-                            cart.getItems().add(new CartItem(product, quantity));
-                        }
-                    });
+                    .ifPresent(product -> createOrUpdateCartItem(cart, product, quantity +
+                            getCartItem(cart, product)
+                                    .map(CartItem::getQuantity).orElse(0))
+                    );
             recalculateCartCost(cart);
             recalculateCartTotalQuantity(cart);
         }
     }
 
-    private void updateCartItem(CartItem cartItem, Product product, int quantity) throws OutOfStockException {
-        int productsInCartCount = cartItem.getQuantity();
-        if (product.getStock() - productsInCartCount < quantity)
-            throw new OutOfStockException(product, quantity, product.getStock());
-
-        cartItem.setQuantity(cartItem.getQuantity() + quantity);
-    }
-
     @Override
     public void update(Cart cart, Long productId, int quantity) throws OutOfStockException {
         synchronized (cart) {
-            Optional<Product> productForAdding = productService.getProduct(productId);
-
-            if (productForAdding.isPresent()) {
-                Product product = productForAdding.get();
-
-                if (quantity <= 0) {
-                    throw new IllegalArgumentException();
-                }
-
-                Optional<CartItem> optionalCartItem = cart.getItems().stream()
-                        .filter(cartItem -> cartItem.getProduct().equals(product))
-                        .findFirst();
-                if (optionalCartItem.isPresent()) {
-                    if (product.getStock() < quantity)
-                        throw new OutOfStockException(product, quantity, product.getStock());
-
-                    optionalCartItem.get().setQuantity(quantity);
-                } else {
-                    cart.getItems().add(new CartItem(productForAdding.get(), quantity));
-                }
-            }
+            productService.getProduct(productId)
+                    .ifPresent(product -> createOrUpdateCartItem(cart, product, quantity));
             recalculateCartCost(cart);
             recalculateCartTotalQuantity(cart);
+        }
+    }
+
+    private void createOrUpdateCartItem(Cart cart, Product product, int quantity) {
+        synchronized (cart) {
+            if (quantity <= 0) {
+                throw new IllegalArgumentException("Quantity must be greater than 0");
+            }
+
+            Optional<CartItem> existedCartItem = cart.getItems().stream()
+                    .filter(cartItem -> cartItem.getProduct().equals(product))
+                    .findFirst();
+            if (existedCartItem.isPresent()) {
+                if (product.getStock() < quantity) {
+                    throw new OutOfStockException(product, quantity, product.getStock());
+                }
+
+                existedCartItem.get().setQuantity(quantity);
+            } else {
+                cart.getItems().add(new CartItem(product, quantity));
+            }
         }
     }
 
