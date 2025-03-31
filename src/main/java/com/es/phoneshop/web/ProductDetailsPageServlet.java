@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Optional;
 
 public class ProductDetailsPageServlet extends HttpServlet {
@@ -64,6 +65,9 @@ public class ProductDetailsPageServlet extends HttpServlet {
         try {
             NumberFormat format = NumberFormat.getInstance(request.getLocale());
             quantity = format.parse(quantityStr).intValue();
+            if (quantity <= 0) {
+                throw new IllegalArgumentException();
+            }
             cartService.add(cart, Long.valueOf(productId.substring(1)), quantity);
         } catch (ParseException e) {
             throw new RuntimeException(e);
