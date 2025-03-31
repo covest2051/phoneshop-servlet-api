@@ -45,6 +45,9 @@ public class CartServiceImpl implements CartService {
                                 .findFirst();
 
                         if (optionalCartItem.isPresent()) {
+                            int productsInCartCount = optionalCartItem.get().getQuantity();
+                            if (product.getStock() - productsInCartCount < quantity)
+                                throw new OutOfStockException(product, quantity, product.getStock());
                             updateCartItem(optionalCartItem.get(), product, quantity);
                         } else {
                             cart.getItems().add(new CartItem(product, quantity));

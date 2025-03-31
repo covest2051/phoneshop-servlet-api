@@ -47,7 +47,7 @@
                         </a>
                     </td>
                     <td class="price">
-                        <a href=${pageContext.servletContext.contextPath}/products/${item.product.id}">
+                        <a href="/phoneshop/products/priceHistory/${item.product.id}">
                             <fmt:formatNumber value="${item.product.price}" type="currency"
                                               currencySymbol="${item.product.currency.symbol}"/>
                         </a>
@@ -66,7 +66,9 @@
                         <input type="hidden" value="${item.product.id}" name="productId">
                     </td>
                     <td>
-                        <button form="deleteCartItem" formaction="${pageContext.servletContext.contextPath}/cart/deleteCartItem/${item.product.id}">✕</button>
+                        <button type="submit"
+                                formaction="${pageContext.servletContext.contextPath}/cart?productId=${item.product.id}"
+                                formmethod="post" name="method" value="DELETE">✕</button>
                     </td>
                 </tr>
             </c:forEach>
@@ -84,6 +86,5 @@
             <button>Update</button>
         </p>
     </form>
-    <form id="deleteCartItem" method="post"></form>
     <a href="/phoneshop/products">Back to products</a>
 </tags:master>
