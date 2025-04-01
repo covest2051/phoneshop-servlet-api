@@ -74,4 +74,52 @@ public class CartServiceTest {
 
         assertEquals(100, cart.getItems().get(0).getQuantity());
     }
+
+    @Test
+    public void testDeleteProduct() throws OutOfStockException {
+        Product product = new Product("test-product-code1", "Samsung Galaxy S", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
+        product.setId(1L);
+        when(productService.getProduct(product.getId())).thenReturn(java.util.Optional.of(product));
+
+        Cart cart = cartService.getCart(request);
+        cartService.add(cart, 1L, 100);
+
+        assertEquals(1, cart.getItems().size());
+
+        cartService.delete(cart, 1L);
+
+        assertEquals(0, cart.getItems().size());
+    }
+
+    @Test
+    public void testRecalculateCartTotalQuantity() throws OutOfStockException {
+        Product product = new Product("test-product-code1", "Samsung Galaxy S", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
+        product.setId(1L);
+        when(productService.getProduct(product.getId())).thenReturn(java.util.Optional.of(product));
+
+        Cart cart = cartService.getCart(request);
+        cartService.add(cart, 1L, 10);
+
+        assertEquals(cart.getTotalQuantity(), 10);
+
+        cartService.add(cart, 1L, 5);
+
+        assertEquals(cart.getTotalQuantity(), 15);
+    }
+
+    @Test
+    public void testRecalculateCartTotalCost() throws OutOfStockException {
+        Product product = new Product("test-product-code1", "Samsung Galaxy S", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
+        product.setId(1L);
+        when(productService.getProduct(product.getId())).thenReturn(java.util.Optional.of(product));
+
+        Cart cart = cartService.getCart(request);
+        cartService.add(cart, 1L, 1);
+
+        assertEquals(cart.getTotalCost(), BigDecimal.valueOf(100));
+
+        cartService.add(cart, 1L, 5);
+
+        assertEquals(cart.getTotalCost(), BigDecimal.valueOf(600));
+    }
 }

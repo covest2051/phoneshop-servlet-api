@@ -18,13 +18,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Optional;
 
 public class ProductDetailsPageServlet extends HttpServlet {
     private ProductService productService;
     private CartService cartService;
     private ViewHistoryServiceImpl viewHistoryService;
-
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -51,24 +51,23 @@ public class ProductDetailsPageServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String productId = request.getPathInfo();
-        String quantityStr = request.getParameter("quantity");
 
         Optional<Product> optionalProduct = productService.getProduct(Long.valueOf(productId.substring(1)));
 
         optionalProduct
                 .map(p -> setProductAttribute(p, request))
                 .orElseThrow(ProductNotFoundException::new);
-
-
-        request.setAttribute("cart", cartService.getCart(request));
-        int quantity = Integer.parseInt(quantityStr);
-
+        String quantityStr = request.getParameter("quantity");
+        int quantity;
         Cart cart = cartService.getCart(request);
         try {
             NumberFormat format = NumberFormat.getInstance(request.getLocale());
             quantity = format.parse(quantityStr).intValue();
+            if (quantity <= 0) {
+                throw new IllegalArgumentException();
+            }
             cartService.add(cart, Long.valueOf(productId.substring(1)), quantity);
         } catch (ParseException e) {
             throw new RuntimeException(e);

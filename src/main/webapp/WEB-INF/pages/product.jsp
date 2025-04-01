@@ -10,7 +10,7 @@
     </p>
     <c:if test="${not empty param.message}">
         <div class="success">
-            ${param.message}
+                ${param.message}
         </div>
     </c:if>
     <p>
@@ -33,8 +33,10 @@
             <tr>
                 <td>Price</td>
                 <td>
-                    <fmt:formatNumber value="${product.price}" type="currency"
-                                      currencySymbol="${product.currency.symbol}"/>
+                    <a href="/phoneshop/products/priceHistory/${product.id}">
+                        <fmt:formatNumber value="${product.price}" type="currency"
+                                          currencySymbol="${product.currency.symbol}"/>
+                    </a>
                 </td>
             </tr>
             <tr>
@@ -56,8 +58,8 @@
         <p>
             <button>Add to cart</button>
             <c:if test="${not empty param.success}">
-                <p class="success">${param.success}</p>
-            </c:if>
+        <p class="success">${param.success}</p>
+        </c:if>
         </p>
     </form>
 </tags:master>

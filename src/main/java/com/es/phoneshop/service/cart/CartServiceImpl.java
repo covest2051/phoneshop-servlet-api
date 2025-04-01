@@ -8,6 +8,7 @@ import com.es.phoneshop.service.product.ProductService;
 import com.es.phoneshop.service.product.ProductServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 public class CartServiceImpl implements CartService {
@@ -35,30 +36,94 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public synchronized void add(Cart cart, Long productId, int quantity) throws OutOfStockException {
-        Optional<Product> productForAdding = productService.getProduct(productId);
-
-        if (productForAdding.isPresent()) {
-            Product product = productForAdding.get();
-            Optional<CartItem> existedCartItem = cart.getItems().stream()
-                    .filter(cartItem -> cartItem.getProduct().equals(product))
-                    .findFirst();
-            if (existedCartItem.isPresent()) {
-                int productsInCartCount = existedCartItem.get().getQuantity();
-                if (product.getStock() - productsInCartCount < quantity)
-                    throw new OutOfStockException(product, quantity, product.getStock());
-
-                existedCartItem.get().setQuantity(existedCartItem.get().getQuantity() + quantity);
-            } else
-                cart.getItems().add(new CartItem(productForAdding.get(), quantity));
+    public void add(Cart cart, Long productId, int quantity) throws OutOfStockException {
+        synchronized (cart) {
+            productService.getProduct(productId)
+                    .ifPresent(product -> createOrUpdateCartItem(cart, product, quantity +
+                            getCartItem(cart, product)
+                                    .map(CartItem::getQuantity).orElse(0))
+                    );
+            recalculateCartCost(cart);
+            recalculateCartTotalQuantity(cart);
         }
     }
 
     @Override
-    public synchronized int getProductQuantityInCart(Cart cart, Long productId) {
-        return cart.getItems().stream()
-                .filter(cartItem -> cartItem.getProduct().getId().equals(productId))
-                .mapToInt(CartItem::getQuantity)
-                .sum();
+    public void update(Cart cart, Long productId, int quantity) throws OutOfStockException {
+        synchronized (cart) {
+            productService.getProduct(productId)
+                    .ifPresent(product -> createOrUpdateCartItem(cart, product, quantity));
+            recalculateCartCost(cart);
+            recalculateCartTotalQuantity(cart);
+        }
+    }
+
+    private void createOrUpdateCartItem(Cart cart, Product product, int quantity) {
+        synchronized (cart) {
+            if (quantity <= 0) {
+                throw new IllegalArgumentException("Quantity must be greater than 0");
+            }
+
+            Optional<CartItem> existedCartItem = cart.getItems().stream()
+                    .filter(cartItem -> cartItem.getProduct().equals(product))
+                    .findFirst();
+            if (existedCartItem.isPresent()) {
+                if (product.getStock() < quantity) {
+                    throw new OutOfStockException(product, quantity, product.getStock());
+                }
+
+                existedCartItem.get().setQuantity(quantity);
+            } else {
+                cart.getItems().add(new CartItem(product, quantity));
+            }
+        }
+    }
+
+    @Override
+    public void delete(Cart cart, Long productId) {
+        synchronized (cart) {
+            cart.getItems().removeIf(cartItem -> productId.equals(cartItem.getProduct().getId()));
+            recalculateCartCost(cart);
+            recalculateCartTotalQuantity(cart);
+        }
+    }
+
+    @Override
+    public Optional<CartItem> getCartItem(Cart cart, Product product) {
+        synchronized (cart) {
+            return cart.getItems().stream()
+                    .filter(cartItem -> cartItem.getProduct().equals(product))
+                    .findFirst();
+        }
+    }
+
+
+    @Override
+    public int getProductQuantityInCart(Cart cart, Long productId) {
+        synchronized (cart) {
+            return cart.getItems().stream()
+                    .filter(cartItem -> cartItem.getProduct().getId().equals(productId))
+                    .mapToInt(CartItem::getQuantity)
+                    .sum();
+        }
+    }
+
+    @Override
+    public void recalculateCartTotalQuantity(Cart cart) {
+        synchronized (cart) {
+            cart.setTotalQuantity(cart.getItems().stream()
+                    .mapToInt(CartItem::getQuantity)
+                    .sum());
+        }
+    }
+
+    @Override
+    public void recalculateCartCost(Cart cart) {
+        synchronized (cart) {
+            cart.setTotalCost(cart.getItems().stream()
+                    .map(cartItem -> cartItem.getProduct().getPrice()
+                            .multiply(BigDecimal.valueOf(cartItem.getQuantity())))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add));
+        }
     }
 }

@@ -43,13 +43,13 @@ public class ProductServiceImpl implements ProductService {
                 .orElse(null);
 
         List<Product> products = productDao.findProducts(query, sortField, sortOrder);
-        if(query != null && !query.isEmpty()) {
+        if (query != null && !query.isEmpty()) {
             products = products.stream()
                     .filter(product -> findQueryAndDescriptionMatch(query, product))
                     .toList();
         }
 
-        if(query != null && !query.isEmpty() && sortField == null && sortOrderStr == null) {
+        if (query != null && !query.isEmpty() && sortField == null && sortOrderStr == null) {
             String[] splitQuery = query.split(" ");
             return productDao.findProducts(query, null, null).stream()
                     .map(product -> ProductUtils.createSearchResult(product, splitQuery))
