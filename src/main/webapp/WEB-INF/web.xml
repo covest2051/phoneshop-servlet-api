@@ -64,6 +64,16 @@
         <url-pattern>/cart/minicart</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>OrderOverviewPageServlet</servlet-name>
+        <servlet-class>com.es.phoneshop.web.OrderOverviewPageServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>OrderOverviewPageServlet</servlet-name>
+        <url-pattern>/order/overview/*</url-pattern>
+    </servlet-mapping>
+
     <filter>
         <filter-name>hiddenHttpMethodFilter</filter-name>
         <filter-class>com.es.phoneshop.web.HiddenHttpMethodFilter</filter-class>
@@ -92,6 +102,11 @@
     <error-page>
         <error-code>404</error-code>
         <location>/WEB-INF/pages/productNotFoundError.jsp</location>
+    </error-page>
+
+    <error-page>
+        <exception-type>com.es.phoneshop.dao.order.OrderNotFoundException</exception-type>
+        <location>/WEB-INF/pages/orderNotFoundError.jsp</location>
     </error-page>
 
     <error-page>

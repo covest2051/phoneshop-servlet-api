@@ -4,7 +4,7 @@
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
 <jsp:useBean id="order" type="com.es.phoneshop.model.order.Order" scope="request"/>
-<tags:master pageTitle="Cart">
+<tags:master pageTitle="Checkout page">
     <p>
         Order: ${order}
     </p>

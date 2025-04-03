@@ -9,6 +9,7 @@ import com.es.phoneshop.model.order.PaymentMethod;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 public class OrderServiceImpl implements OrderService {
     private static final OrderServiceImpl ORDER_SERVICE = new OrderServiceImpl();
@@ -48,6 +49,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void placeOrder(Order order) {
+        order.setSecureId(String.valueOf(UUID.randomUUID()));
         orderDao.save(order);
     }
 

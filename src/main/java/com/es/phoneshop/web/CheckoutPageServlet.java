@@ -1,7 +1,6 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.cart.Cart;
-import com.es.phoneshop.model.cart.OutOfStockException;
 import com.es.phoneshop.model.order.Order;
 import com.es.phoneshop.model.order.PaymentMethod;
 import com.es.phoneshop.service.cart.CartService;
@@ -13,11 +12,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,18 +58,13 @@ public class CheckoutPageServlet extends HttpServlet {
     private void handleErrors(HttpServletRequest request, HttpServletResponse response, Map<String, String> errors, Order order) throws ServletException, IOException {
         if(errors.isEmpty()) {
             orderService.placeOrder(order);
-            response.sendRedirect(request.getContextPath() + "/orderOverview");
+            response.sendRedirect(request.getContextPath() + "/order/overview/" + order.getSecureId());
         } else {
             request.setAttribute("errors", errors);
             request.setAttribute("paymentMethods", orderService.getPaymentMethods());
             request.setAttribute("order", order);
             request.getRequestDispatcher("/WEB-INF/pages/checkout.jsp").forward(request, response);
         }
-    }
-
-    private int getQuantity(String quantityString, HttpServletRequest request) throws ParseException {
-        NumberFormat numberFormat = NumberFormat.getInstance(request.getLocale());
-        return numberFormat.parse(quantityString).intValue();
     }
 
     private void setRequiredParameterForString(HttpServletRequest request, String parameter, Map<String, String> errors, Consumer<String> consumer) {

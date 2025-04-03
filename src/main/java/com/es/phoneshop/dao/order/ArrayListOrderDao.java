@@ -4,7 +4,6 @@ import com.es.phoneshop.model.order.Order;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -25,13 +24,14 @@ public class ArrayListOrderDao implements OrderDao {
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     @Override
-    public Optional<Order> getOrder(Long id) throws OrderNotFoundException {
+    public Order getOrder(Long id) throws OrderNotFoundException {
         lock.readLock().lock();
         try {
             return orders.stream()
                     .filter(order -> id.equals(order.getId()))
                     .findAny()
-                    .map(Order::new);
+                    .map(Order::new)
+                    .orElseThrow(OrderNotFoundException::new);
         } finally {
             lock.readLock().unlock();
         }
@@ -41,13 +41,26 @@ public class ArrayListOrderDao implements OrderDao {
     public void save(Order order) throws OrderNotFoundException {
         lock.writeLock().lock();
         try {
-            if(order.getId() != null) {
+            if (order.getId() != null) {
                 orders.remove(getOrder(order.getId()));
                 orders.add(order);
             } else {
                 order.setId(orderId.incrementAndGet());
                 orders.add(order);
             }
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    @Override
+    public Order getOrderBySecureId(String secureId) throws OrderNotFoundException {
+        lock.writeLock().lock();
+        try {
+            return orders.stream()
+                    .filter(order -> secureId.equals(order.getSecureId()))
+                    .findFirst()
+                    .orElseThrow(OrderNotFoundException::new);
         } finally {
             lock.writeLock().unlock();
         }
