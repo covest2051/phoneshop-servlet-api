@@ -20,7 +20,6 @@ import java.util.Map;
 public class CartPageServlet extends HttpServlet {
     private CartService cartService;
 
-
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -100,6 +99,4 @@ public class CartPageServlet extends HttpServlet {
         NumberFormat numberFormat = NumberFormat.getInstance(request.getLocale());
         return numberFormat.parse(quantityString).intValue();
     }
-
-
 }
