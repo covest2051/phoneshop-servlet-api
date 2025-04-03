@@ -18,7 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.List;
 import java.util.Optional;
 
 public class ProductDetailsPageServlet extends HttpServlet {
@@ -29,9 +28,9 @@ public class ProductDetailsPageServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        productService = ProductServiceImpl.getProductService();
-        cartService = CartServiceImpl.getCartService();
-        viewHistoryService = ViewHistoryServiceImpl.getViewHistoryService();
+        productService = ProductServiceImpl.getInstance();
+        cartService = CartServiceImpl.getInstance();
+        viewHistoryService = ViewHistoryServiceImpl.getInstance();
     }
 
     @Override

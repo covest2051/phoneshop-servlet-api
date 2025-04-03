@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.UUID;
 
 public class OrderServiceImpl implements OrderService {
-    private static final OrderServiceImpl ORDER_SERVICE = new OrderServiceImpl();
+    private static final OrderServiceImpl INSTANCE = new OrderServiceImpl();
     private OrderDao orderDao;
 
     public synchronized static OrderServiceImpl getInstance() {
-        return ORDER_SERVICE;
+        return INSTANCE;
     }
 
     public OrderServiceImpl() {

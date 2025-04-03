@@ -1,13 +1,13 @@
 package com.es.phoneshop.model.order;
 
+import com.es.phoneshop.dao.Copyable;
 import com.es.phoneshop.model.cart.Cart;
+import com.es.phoneshop.model.cart.CartItem;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class Order extends Cart {
-    private Long id;
-
+public class Order extends Cart implements Copyable<Order> {
     private String secureId;
 
     private BigDecimal subtotal;
@@ -15,8 +15,6 @@ public class Order extends Cart {
     private BigDecimal deliveryCost;
 
     private BigDecimal totalCost;
-
-    private int totalQuantity;
 
     private String firstName;
 
@@ -34,17 +32,21 @@ public class Order extends Cart {
     }
 
     public Order(Order other) {
-        this.id = other.id;
+        this.setId(other.getId());
         this.subtotal = other.subtotal;
         this.deliveryCost = other.deliveryCost;
         this.totalCost = other.totalCost;
-        this.totalQuantity = other.totalQuantity;
         this.firstName = other.firstName;
         this.lastName = other.lastName;
         this.phone = other.phone;
         this.deliveryDate = other.deliveryDate;
         this.deliveryAddress = other.deliveryAddress;
         this.paymentMethod = other.paymentMethod;
+        this.secureId = other.secureId;
+        this.setTotalQuantity(other.getTotalQuantity());
+        this.setItems(other.getItems().stream()
+                .map(CartItem::clone)
+                .toList());
     }
 
     public BigDecimal getSubtotal() {
@@ -69,16 +71,6 @@ public class Order extends Cart {
 
     public void setTotalCost(BigDecimal totalCost) {
         this.totalCost = totalCost;
-    }
-
-    @Override
-    public int getTotalQuantity() {
-        return totalQuantity;
-    }
-
-    @Override
-    public void setTotalQuantity(int totalQuantity) {
-        this.totalQuantity = totalQuantity;
     }
 
     public String getFirstName() {
@@ -137,11 +129,8 @@ public class Order extends Cart {
         this.secureId = secureId;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    @Override
+    public Order copy() {
+        return new Order(this);
     }
 }

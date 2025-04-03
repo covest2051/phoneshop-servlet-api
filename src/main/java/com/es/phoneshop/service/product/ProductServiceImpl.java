@@ -1,12 +1,12 @@
 package com.es.phoneshop.service.product;
 
 import com.es.phoneshop.dao.product.ArrayListProductDao;
-import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.dao.product.ProductDao;
+import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.model.product.SearchResult;
 import com.es.phoneshop.model.product.SortField;
 import com.es.phoneshop.model.product.SortOrder;
 import com.es.phoneshop.util.ProductUtils;
-import com.es.phoneshop.model.product.SearchResult;
 
 import java.util.Comparator;
 import java.util.List;
@@ -15,20 +15,20 @@ import java.util.Optional;
 import static com.es.phoneshop.util.ProductUtils.findQueryAndDescriptionMatch;
 
 public class ProductServiceImpl implements ProductService {
-    private static final ProductServiceImpl PRODUCT_SERVICE_IMPL = new ProductServiceImpl();
+    private static final ProductServiceImpl INSTANCE = new ProductServiceImpl();
     private final ProductDao productDao;
 
     public ProductServiceImpl() {
-        this.productDao = ArrayListProductDao.getArrayListProductDao();
+        this.productDao = ArrayListProductDao.getInstance();
     }
 
-    public synchronized static ProductServiceImpl getProductService() {
-        return PRODUCT_SERVICE_IMPL;
+    public synchronized static ProductServiceImpl getInstance() {
+        return INSTANCE;
     }
 
     @Override
     public Optional<Product> getProduct(Long id) {
-        return productDao.getProduct(id);
+        return productDao.getById(id);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void saveAll(List<Product> products) {
-        productDao.saveAll(products);
+        products.forEach(productDao::save);
     }
 
     @Override
