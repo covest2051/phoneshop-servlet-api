@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Optional;
 
 public class ProductDetailsPageServlet extends HttpServlet {

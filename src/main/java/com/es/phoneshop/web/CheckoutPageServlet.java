@@ -46,23 +46,23 @@ public class CheckoutPageServlet extends HttpServlet {
 
         Map<String, String> errors = new HashMap<>();
 
-        validateStringParameter(request, "firstName", OrderUtils.nameAndSurnameRegex)
+        validateStringParameter(request, "firstName", OrderUtils.NAME_AND_SURNAME_REGEX)
                 .ifPresentOrElse(error -> errors.put("firstName", error),
                         () -> order.setFirstName(request.getParameter("firstName")));
 
-        validateStringParameter(request, "lastName", OrderUtils.nameAndSurnameRegex)
+        validateStringParameter(request, "lastName", OrderUtils.NAME_AND_SURNAME_REGEX)
                 .ifPresentOrElse(
                         error -> errors.put("lastName", error),
                         () -> order.setLastName(request.getParameter("lastName"))
                 );
 
-        validateStringParameter(request, "phone", OrderUtils.phoneRegex)
+        validateStringParameter(request, "phone", OrderUtils.PHONE_REGEX)
                 .ifPresentOrElse(
                         error -> errors.put("phone", error),
                         () -> order.setPhone(request.getParameter("phone"))
                 );
 
-        validateStringParameter(request, "deliveryAddress", OrderUtils.deliveryAddressRegex)
+        validateStringParameter(request, "deliveryAddress", OrderUtils.DELIVERY_ADDRESS_REGEX)
                 .ifPresentOrElse(
                         error -> errors.put("deliveryAddress", error),
                         () -> order.setDeliveryAddress(request.getParameter("deliveryAddress"))

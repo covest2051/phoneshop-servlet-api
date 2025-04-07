@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+
 public class ArrayListProductDao extends ArrayListGenericDao<Product> implements ProductDao {
     private static final ArrayListProductDao INSTANCE = new ArrayListProductDao();
 
@@ -23,19 +24,21 @@ public class ArrayListProductDao extends ArrayListGenericDao<Product> implements
 
     private final Map<SortField, Comparator<Product>> comparators = Map.of(
             SortField.DESCRIPTION, Comparator.comparing(Product::getDescription),
-            SortField.PRICE, Comparator.comparing(Product::getPrice)
+            SortField.PRICE, Comparator.comparing(Product::getPrice),
+            SortField.DEFAULT, Comparator.comparing(Product::getId)
     );
 
     @Override
     public List<Product> findProducts(String query, SortField sortField, SortOrder sortOrder) {
         lock.readLock().lock();
         try {
-            Comparator<Product> comparator;
             if (sortField == null) {
-                comparator = Comparator.comparing(Product::getDescription);
-            } else {
-                comparator = comparators.get(sortField);
+                sortField = SortField.DEFAULT;
             }
+
+            Comparator<Product> comparator = Optional.ofNullable(comparators.get(sortField))
+                    .orElse( comparators.get(SortField.DEFAULT));
+
             if (sortOrder == SortOrder.DESC) {
                 comparator = comparator.reversed();
             }
