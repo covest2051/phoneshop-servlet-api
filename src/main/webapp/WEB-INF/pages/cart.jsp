@@ -86,5 +86,8 @@
             <button>Update</button>
         </p>
     </form>
+    <form method="get" action="${pageContext.request.contextPath}/checkout">
+        <button type="submit">Checkout</button>
+    </form>
     <a href="/phoneshop/products">Back to products</a>
 </tags:master>

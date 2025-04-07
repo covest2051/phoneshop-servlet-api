@@ -1,5 +1,8 @@
 package com.es.phoneshop.model.product;
 
+import com.es.phoneshop.dao.Copyable;
+import com.es.phoneshop.model.GenericEntity;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -8,8 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class Product implements Serializable {
-    private Long id;
+public class Product extends GenericEntity implements Serializable, Copyable<Product> {
     private String code;
     private String description;
     /**
@@ -29,7 +31,7 @@ public class Product implements Serializable {
 
     public Product(Long id, String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl) {
         this();
-        this.id = id;
+        this.setId(id);
         this.code = code;
         this.description = description;
         this.price = price;
@@ -54,7 +56,7 @@ public class Product implements Serializable {
 
     // c-tor копирования
     public Product(Product other) {
-        this.id = other.id;
+        this.setId(other.getId());
         this.code = other.code;
         this.description = other.description;
         this.price = other.price;
@@ -62,14 +64,6 @@ public class Product implements Serializable {
         this.stock = other.stock;
         this.imageUrl = other.imageUrl;
         this.priceHistory = other.priceHistory;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getCode() {
@@ -133,11 +127,17 @@ public class Product implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Objects.equals(id, product.id) && Objects.equals(code, product.code);
+        return Objects.equals(getId(), product.getId()) &&
+                Objects.equals(code, product.code);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, code);
+        return Objects.hash(getId(), code);
+    }
+
+    @Override
+    public Product copy() {
+        return new Product(this);
     }
 }

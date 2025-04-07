@@ -14,7 +14,7 @@ public class DemoDataServletContextListener implements ServletContextListener {
     private ProductService productService;
 
     public DemoDataServletContextListener() {
-        this.productService = ProductServiceImpl.getProductService();
+        this.productService = ProductServiceImpl.getInstance();
     }
 
     @Override

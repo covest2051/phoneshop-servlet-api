@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ViewHistoryServiceImpl implements ViewHistoryService {
-    private static final ViewHistoryServiceImpl VIEW_HISTORY_SERVICE = new ViewHistoryServiceImpl();
+    private static final ViewHistoryServiceImpl INSTANCE = new ViewHistoryServiceImpl();
 
-    public synchronized static ViewHistoryServiceImpl getViewHistoryService() {
-        return VIEW_HISTORY_SERVICE;
+    public synchronized static ViewHistoryServiceImpl getInstance() {
+        return INSTANCE;
     }
 
     @Override

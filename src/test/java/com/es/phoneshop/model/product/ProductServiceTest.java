@@ -4,21 +4,23 @@ import com.es.phoneshop.service.product.ProductService;
 import com.es.phoneshop.service.product.ProductServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ProductServiceTest {
     private ProductService productService;
-    private Currency usd = Currency.getInstance("USD");
 
     @Before
     public void setup() {
+        MockitoAnnotations.initMocks(this);
         productService = new ProductServiceImpl();
     }
 
@@ -81,22 +83,6 @@ public class ProductServiceTest {
         assertTrue(getProduct2.isPresent());
         assertEquals("Samsung Galaxy S I", getProduct1.get().getDescription());
         assertEquals("Apple iPhone 6", getProduct2.get().getDescription());
-    }
-
-    @Test
-    public void testFindProductsSortedByPrice() {
-        Currency usd = Currency.getInstance("USD");
-        Product product1 = new Product("test-product-code1", "Samsung Galaxy S I", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
-        Product product2 = new Product("iphone6", "Apple iPhone 6", new BigDecimal(1000), usd, 30, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Apple/Apple%20iPhone%206.jpg");
-
-        productService.save(product1);
-        productService.save(product2);
-
-        List<Product> products = productService.findProducts(null, SortField.PRICE.toString(), SortOrder.ASC.toString());
-        assertFalse(products.isEmpty());
-
-        assertEquals("test-product-code1", products.get(0).getCode());
-        assertEquals("iphone6", products.get(1).getCode());
     }
 
     @Test

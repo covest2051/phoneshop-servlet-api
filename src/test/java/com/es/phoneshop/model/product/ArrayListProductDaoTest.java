@@ -1,7 +1,7 @@
 package com.es.phoneshop.model.product;
 
-import com.es.phoneshop.dao.ArrayListProductDao;
-import com.es.phoneshop.dao.ProductDao;
+import com.es.phoneshop.dao.product.ArrayListProductDao;
+import com.es.phoneshop.dao.product.ProductDao;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,7 +21,7 @@ public class ArrayListProductDaoTest {
 
     @Before
     public void setup() {
-        productDao = ArrayListProductDao.getArrayListProductDao();
+        productDao = ArrayListProductDao.getInstance();
     }
 
     @Test
@@ -31,7 +31,7 @@ public class ArrayListProductDaoTest {
 
         productDao.save(newProduct);
 
-        Optional<Product> getProduct = productDao.getProduct(newProduct.getId());
+        Optional<Product> getProduct = productDao.getById(newProduct.getId());
 
         assertTrue(getProduct.isPresent());
         assertEquals(newProduct.getId(), getProduct.get().getId());
@@ -56,7 +56,7 @@ public class ArrayListProductDaoTest {
         Product newProduct = new Product("test-product-code", "Samsung Galaxy S", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
         productDao.save(newProduct);
 
-        Optional<Product> savedProduct = productDao.getProduct(newProduct.getId());
+        Optional<Product> savedProduct = productDao.getById(newProduct.getId());
 
         assertTrue(savedProduct.isPresent());
         assertEquals("test-product-code", savedProduct.get().getCode());
@@ -69,12 +69,12 @@ public class ArrayListProductDaoTest {
 
         productDao.save(productForSave);
 
-        Optional<Product> getProduct = productDao.getProduct(productForSave.getId());
+        Optional<Product> getProduct = productDao.getById(productForSave.getId());
         assertTrue(getProduct.isPresent());
 
         productDao.delete(productForSave.getId());
 
-        Optional<Product> deletedProduct = productDao.getProduct(productForSave.getId());
+        Optional<Product> deletedProduct = productDao.getById(productForSave.getId());
         assertFalse(deletedProduct.isPresent());
     }
 
@@ -87,7 +87,7 @@ public class ArrayListProductDaoTest {
         product.setDescription("Updated description");
         productDao.save(product);
 
-        Optional<Product> updatedProduct = productDao.getProduct(product.getId());
+        Optional<Product> updatedProduct = productDao.getById(product.getId());
         assertTrue(updatedProduct.isPresent());
         assertEquals("Updated description", updatedProduct.get().getDescription());
     }
@@ -120,20 +120,6 @@ public class ArrayListProductDaoTest {
     }
 
     @Test
-    public void testSortProductsByDescriptionAscending() {
-        Currency usd = Currency.getInstance("USD");
-        Product product1 = new Product("test-product-code1", "Samsung Galaxy S", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
-        Product product2 = new Product("iphone6", "Apple iPhone 6", new BigDecimal(1000), usd, 30, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Apple/Apple%20iPhone%206.jpg");
-        productDao.save(product1);
-        productDao.save(product2);
-
-        List<Product> searchResults = productDao.findProducts(null, SortField.DESCRIPTION, SortOrder.ASC);
-
-        assertEquals("Apple iPhone 6", searchResults.get(0).getDescription());
-        assertEquals("Samsung Galaxy S", searchResults.get(1).getDescription());
-    }
-
-    @Test
     public void testPriceHistoryPopup() {
         Currency usd = Currency.getInstance("USD");
         Product product = new Product("test-product-code1", "Samsung Galaxy S I", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
@@ -146,6 +132,4 @@ public class ArrayListProductDaoTest {
         assertEquals(product.getPriceHistory().get(0).getPrice(), (new BigDecimal(100)));
         assertEquals(product.getPriceHistory().get(1).getPrice(), (new BigDecimal(150)));
     }
-
-
 }

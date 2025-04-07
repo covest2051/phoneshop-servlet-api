@@ -2,4 +2,3 @@ target
 .idea
 *.iml
 jetty-sessions
-cart_fixes.patch

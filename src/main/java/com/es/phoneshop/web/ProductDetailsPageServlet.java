@@ -29,9 +29,9 @@ public class ProductDetailsPageServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        productService = ProductServiceImpl.getProductService();
-        cartService = CartServiceImpl.getCartService();
-        viewHistoryService = ViewHistoryServiceImpl.getViewHistoryService();
+        productService = ProductServiceImpl.getInstance();
+        cartService = CartServiceImpl.getInstance();
+        viewHistoryService = ViewHistoryServiceImpl.getInstance();
     }
 
     @Override

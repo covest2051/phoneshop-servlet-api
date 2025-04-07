@@ -16,14 +16,14 @@ public class CartServiceImpl implements CartService {
 
     private ProductService productService;
 
-    private static final CartService CART_SERVICE = new CartServiceImpl();
+    private static final CartService INSTANCE = new CartServiceImpl();
 
-    public synchronized static CartService getCartService() {
-        return CART_SERVICE;
+    public synchronized static CartService getInstance() {
+        return INSTANCE;
     }
 
     public CartServiceImpl() {
-        this.productService = ProductServiceImpl.getProductService();
+        this.productService = ProductServiceImpl.getInstance();
     }
 
     @Override
