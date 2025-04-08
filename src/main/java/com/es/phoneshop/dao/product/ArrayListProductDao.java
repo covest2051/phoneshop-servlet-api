@@ -23,7 +23,8 @@ public class ArrayListProductDao extends ArrayListGenericDao<Product> implements
 
     private final Map<SortField, Comparator<Product>> comparators = Map.of(
             SortField.DESCRIPTION, Comparator.comparing(Product::getDescription),
-            SortField.PRICE, Comparator.comparing(Product::getPrice)
+            SortField.PRICE, Comparator.comparing(Product::getPrice),
+            SortField.RATING, Comparator.comparing(Product::getRating)
     );
 
     @Override

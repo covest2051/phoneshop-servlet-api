@@ -2,10 +2,13 @@ package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.OutOfStockException;
+import com.es.phoneshop.model.product.Feedback;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductNotFoundException;
 import com.es.phoneshop.service.cart.CartService;
 import com.es.phoneshop.service.cart.CartServiceImpl;
+import com.es.phoneshop.service.product.FeedbackService;
+import com.es.phoneshop.service.product.FeedbackServiceImpl;
 import com.es.phoneshop.service.product.ProductService;
 import com.es.phoneshop.service.product.ProductServiceImpl;
 import com.es.phoneshop.service.product.ViewHistoryServiceImpl;
@@ -25,6 +28,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
     private ProductService productService;
     private CartService cartService;
     private ViewHistoryServiceImpl viewHistoryService;
+    private FeedbackService feedbackService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -32,6 +36,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
         productService = ProductServiceImpl.getInstance();
         cartService = CartServiceImpl.getInstance();
         viewHistoryService = ViewHistoryServiceImpl.getInstance();
+        feedbackService = FeedbackServiceImpl.getInstance();
     }
 
     @Override
@@ -39,8 +44,15 @@ public class ProductDetailsPageServlet extends HttpServlet {
         String productId = request.getPathInfo();
         Optional<Product> optionalProduct = productService.getProduct(Long.valueOf(productId.substring(1)));
 
+        String sort = request.getParameter("sort");
+        String order = request.getParameter("order");
+
         optionalProduct
-                .map(p -> setProductAttribute(p, request))
+                .map(product -> {
+                    List<Feedback> sortedFeedback = feedbackService.getFeedbackList(product.getFeedbackList(), sort, order);
+                    request.setAttribute("feedbackList", sortedFeedback);
+                    return setProductAttribute(product, request);
+                })
                 .orElseThrow(ProductNotFoundException::new);
 
         request.setAttribute("cart", cartService.getCart(request));
@@ -59,12 +71,14 @@ public class ProductDetailsPageServlet extends HttpServlet {
         optionalProduct
                 .map(p -> setProductAttribute(p, request))
                 .orElseThrow(ProductNotFoundException::new);
+
         String quantityStr = request.getParameter("quantity");
         int quantity;
         Cart cart = cartService.getCart(request);
         try {
             NumberFormat format = NumberFormat.getInstance(request.getLocale());
             quantity = format.parse(quantityStr).intValue();
+
             if (quantity <= 0) {
                 throw new IllegalArgumentException();
             }
@@ -73,6 +87,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
             throw new RuntimeException(e);
         } catch (OutOfStockException e) {
             int productQuantityInCart = cartService.getProductQuantityInCart(cart, optionalProduct.get().getId());
+
             response.sendRedirect(request.getContextPath() + "/products" + productId + "?error=Not enough stock, available to buy: " + (e.getStockAvailable() - productQuantityInCart));
             return;
         }

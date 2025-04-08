@@ -1,7 +1,5 @@
 package com.es.phoneshop.model.product;
 
-public enum SortField {
-    DESCRIPTION,
-    PRICE,
+public enum FeedbackSortField {
     RATING
 }
