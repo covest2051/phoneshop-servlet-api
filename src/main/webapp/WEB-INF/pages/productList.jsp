@@ -45,6 +45,19 @@
             <td>
                 Quantity
             </td>
+            <td>
+                Rating
+                <c:choose>
+                    <c:when test="${not empty param.query}">
+                        <a href="?sort=rating&order=asc&query=${param.query}">▲</a>
+                        <a href="?sort=rating&order=desc&query=${param.query}">▼</a>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="?sort=rating&order=asc">▲</a>
+                        <a href="?sort=rating&order=desc">▼</a>
+                    </c:otherwise>
+                </c:choose>
+            </td>
         </tr>
         </thead>
         <c:forEach var="product" items="${products}">
@@ -68,6 +81,9 @@
                         <input type="number" name="quantity" value="1">
                         <button type="submit">Add to cart</button>
                     </form>
+                </td>
+                <td>
+                    ${product.rating}
                 </td>
             </tr>
         </c:forEach>

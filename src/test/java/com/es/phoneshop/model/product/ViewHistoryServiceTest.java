@@ -29,7 +29,7 @@ public class ViewHistoryServiceTest {
     @Mock
     private HttpServletRequest request;
 
-    private ViewHistoryServiceImpl service = ViewHistoryServiceImpl.getViewHistoryService();
+    private ViewHistoryServiceImpl service = ViewHistoryServiceImpl.getInstance();
 
     @Before
     public void setup() {
@@ -72,7 +72,9 @@ public class ViewHistoryServiceTest {
         Product product3 = new Product("test-product-code3", "Samsung Galaxy S III", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
 
         List<Product> viewHistory = new ArrayList<>();
-        viewHistory.add(product1); viewHistory.add(product2); viewHistory.add(product3);
+        viewHistory.add(product1);
+        viewHistory.add(product2);
+        viewHistory.add(product3);
 
         when(session.getAttribute("viewHistory")).thenReturn(viewHistory);
 
