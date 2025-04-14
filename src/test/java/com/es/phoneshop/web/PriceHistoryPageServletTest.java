@@ -23,7 +23,8 @@ import java.util.Date;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PriceHistoryPageServletTest {
@@ -44,7 +45,7 @@ public class PriceHistoryPageServletTest {
     public void setup() throws ServletException {
         servlet.init(servletConfig);
         when(request.getRequestDispatcher(any(String.class))).thenReturn(requestDispatcher);
-        productService = ProductServiceImpl.getProductService();
+        productService = ProductServiceImpl.getInstance();
     }
 
     @Test
