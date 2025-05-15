@@ -1,7 +1,7 @@
 package com.es.phoneshop.model;
 
 public class GenericEntity {
-    Long id;
+    private Long id;
 
     public Long getId() {
         return id;
