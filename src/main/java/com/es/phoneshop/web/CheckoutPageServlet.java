@@ -7,7 +7,7 @@ import com.es.phoneshop.service.cart.CartService;
 import com.es.phoneshop.service.cart.CartServiceImpl;
 import com.es.phoneshop.service.order.OrderService;
 import com.es.phoneshop.service.order.OrderServiceImpl;
-import com.es.phoneshop.util.OrderUtils;
+import com.es.phoneshop.util.ValidationUtils;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -46,23 +46,23 @@ public class CheckoutPageServlet extends HttpServlet {
 
         Map<String, String> errors = new HashMap<>();
 
-        validateStringParameter(request, "firstName", OrderUtils.NAME_AND_SURNAME_REGEX)
+        validateStringParameter(request, "firstName", ValidationUtils.NAME_AND_SURNAME_REGEX)
                 .ifPresentOrElse(error -> errors.put("firstName", error),
                         () -> order.setFirstName(request.getParameter("firstName")));
 
-        validateStringParameter(request, "lastName", OrderUtils.NAME_AND_SURNAME_REGEX)
+        validateStringParameter(request, "lastName", ValidationUtils.NAME_AND_SURNAME_REGEX)
                 .ifPresentOrElse(
                         error -> errors.put("lastName", error),
                         () -> order.setLastName(request.getParameter("lastName"))
                 );
 
-        validateStringParameter(request, "phone", OrderUtils.PHONE_REGEX)
+        validateStringParameter(request, "phone", ValidationUtils.PHONE_REGEX)
                 .ifPresentOrElse(
                         error -> errors.put("phone", error),
                         () -> order.setPhone(request.getParameter("phone"))
                 );
 
-        validateStringParameter(request, "deliveryAddress", OrderUtils.DELIVERY_ADDRESS_REGEX)
+        validateStringParameter(request, "deliveryAddress", ValidationUtils.DELIVERY_ADDRESS_REGEX)
                 .ifPresentOrElse(
                         error -> errors.put("deliveryAddress", error),
                         () -> order.setDeliveryAddress(request.getParameter("deliveryAddress"))
@@ -99,7 +99,7 @@ public class CheckoutPageServlet extends HttpServlet {
             return Optional.of("Field \"" + parameterName + "\" should not be empty");
         }
 
-        if (!OrderUtils.validateString(value, regex)) {
+        if (!ValidationUtils.validateString(value, regex)) {
             return Optional.of("Field \"" + parameterName + "\" does not match the required format");
         }
         return Optional.empty();

@@ -3,8 +3,6 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
-<jsp:useBean id="products" type="java.util.List" scope="request"/>
-
 <tags:master pageTitle="Advanced Search">
     <form method="get" action="${pageContext.request.contextPath}/advancedSearch">
         <table>
@@ -23,11 +21,21 @@
             </tr>
             <tr>
                 <td>Min price:</td>
-                <td><input name="minPrice" value="${param.minPrice}" /></td>
+                <td>
+                    <input name="minPrice" value="${param.minPrice}" />
+                    <c:if test="${not empty errors.minPrice}">
+                        <span style="color: red;">${errors.minPrice}</span>
+                    </c:if>
+                </td>
             </tr>
             <tr>
                 <td>Max price:</td>
-                <td><input name="maxPrice" value="${param.maxPrice}" /></td>
+                <td>
+                    <input name="maxPrice" value="${param.maxPrice}" />
+                    <c:if test="${not empty errors.maxPrice}">
+                        <span style="color: red;">${errors.maxPrice}</span>
+                    </c:if>
+                </td>
             </tr>
         </table>
         <p><button type="submit">Search</button></p>
@@ -63,7 +71,7 @@
                 </tbody>
             </table>
         </c:if>
-        <c:if test="${empty products}">
+        <c:if test="${not empty param && empty products && empty errors}">
             <p>No products found for your query.</p>
         </c:if>
     </c:if>
