@@ -55,6 +55,16 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>AdvancedSearchServlet</servlet-name>
+        <servlet-class>com.es.phoneshop.web.AdvancedSearchServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdvancedSearchServlet</servlet-name>
+        <url-pattern>/advancedSearch</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>minicart</servlet-name>
         <servlet-class>com.es.phoneshop.web.MiniCartServlet</servlet-class>
     </servlet>
