@@ -8,11 +8,13 @@ import com.es.phoneshop.model.product.SortField;
 import com.es.phoneshop.model.product.SortOrder;
 import com.es.phoneshop.util.ProductUtils;
 
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import static com.es.phoneshop.util.ProductUtils.findQueryAndDescriptionMatch;
+import static com.es.phoneshop.util.ProductUtils.findQueryAndDescriptionAllMatch;
+import static com.es.phoneshop.util.ProductUtils.findQueryAndDescriptionAnyMatch;
 
 public class ProductServiceImpl implements ProductService {
     private static final ProductServiceImpl INSTANCE = new ProductServiceImpl();
@@ -45,7 +47,7 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = productDao.findProducts(query, sortField, sortOrder);
         if (query != null && !query.isEmpty()) {
             products = products.stream()
-                    .filter(product -> findQueryAndDescriptionMatch(query, product))
+                    .filter(product -> findQueryAndDescriptionAllMatch(query, product))
                     .toList();
         }
 
@@ -58,6 +60,43 @@ public class ProductServiceImpl implements ProductService {
                     .map(SearchResult::getProduct)
                     .toList();
         }
+        return products;
+    }
+
+    @Override
+    public List<Product> advancedFindProducts(String query, String match, String minPrice, String maxPrice) {
+        List<Product> products = productDao.findProducts(query, null, null);
+        if (query != null && !query.isEmpty()) {
+            String[] splitQuery = query.split(" ");
+            products = products.stream()
+                    .filter(product -> {
+                        if("all".equalsIgnoreCase(match)) {
+                            return findQueryAndDescriptionAllMatch(query, product);
+                        } else {
+                            return findQueryAndDescriptionAnyMatch(query, product);
+                        }
+                    })
+                    .map(product -> ProductUtils.createSearchResult(product, splitQuery))
+                    .filter(searchResult -> searchResult.getRelevance() > 0)
+                    .sorted(Comparator.comparingInt(SearchResult::getRelevance).reversed())
+                    .map(SearchResult::getProduct)
+                    .toList();
+        }
+
+        if (minPrice != null && !minPrice.isEmpty()) {
+            BigDecimal bigDecimalMinPrice = new BigDecimal(minPrice);
+            products = products.stream()
+                    .filter(product -> product.getPrice().compareTo(bigDecimalMinPrice) >= 0)
+                    .toList();
+        }
+
+        if (maxPrice != null && !maxPrice.isEmpty()) {
+            BigDecimal bigDecimalMaxPrice = new BigDecimal(maxPrice);
+            products = products.stream()
+                    .filter(product -> product.getPrice().compareTo(bigDecimalMaxPrice) <= 0)
+                    .toList();
+        }
+
         return products;
     }
 

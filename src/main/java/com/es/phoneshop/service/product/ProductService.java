@@ -12,6 +12,8 @@ public interface ProductService {
 
     List<Product> findProducts(String query, String sortFieldStr, String sortOrderStr);
 
+    List<Product> advancedFindProducts(String query, String match, String minPrice, String maxPrice);
+
     void save(Product product);
 
     void saveAll(List<Product> products);

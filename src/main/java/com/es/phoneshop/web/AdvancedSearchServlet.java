@@ -27,7 +27,7 @@ public class AdvancedSearchServlet extends HttpServlet {
         String maxPrice = request.getParameter("maxPrice");
         String sortField = request.getParameter("sort");
         String sortOrder = request.getParameter("order");
-        request.setAttribute("products", productService.findProducts(query, sortField, sortOrder));
+        request.setAttribute("products", productService.advancedFindProducts(query, match, minPrice, maxPrice));
         request.getRequestDispatcher("/WEB-INF/pages/advancedSearch.jsp").forward(request, response);
     }
 }
