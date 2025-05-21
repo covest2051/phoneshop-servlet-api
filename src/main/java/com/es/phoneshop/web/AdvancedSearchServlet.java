@@ -55,7 +55,7 @@ public class AdvancedSearchServlet extends HttpServlet {
             return;
         }
 
-        request.setAttribute("products", productService.advancedFindProducts(query, match, minPrice, maxPrice));
+        request.setAttribute("products", productService.advancedFindProducts(query, match, minPrice, maxPrice, sortField, sortOrder));
         request.getRequestDispatcher("/WEB-INF/pages/advancedSearch.jsp").forward(request, response);
     }
 

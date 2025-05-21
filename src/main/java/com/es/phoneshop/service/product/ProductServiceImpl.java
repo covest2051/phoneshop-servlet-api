@@ -11,6 +11,7 @@ import com.es.phoneshop.util.ProductUtils;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.es.phoneshop.util.ProductUtils.findQueryAndDescriptionAllMatch;
@@ -32,6 +33,12 @@ public class ProductServiceImpl implements ProductService {
     public Optional<Product> getProduct(Long id) {
         return productDao.getById(id);
     }
+
+    private final Map<SortField, Comparator<Product>> comparators = Map.of(
+            SortField.DESCRIPTION, Comparator.comparing(Product::getDescription),
+            SortField.PRICE, Comparator.comparing(Product::getPrice),
+            SortField.DEFAULT, Comparator.comparing(Product::getId)
+    );
 
     @Override
     public List<Product> findProducts(String query, String sortFieldStr, String sortOrderStr) {
@@ -64,8 +71,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> advancedFindProducts(String query, String match, String minPrice, String maxPrice) {
-        List<Product> products = productDao.findProducts(query, null, null);
+    public List<Product> advancedFindProducts(String query, String match, String minPrice, String maxPrice, String sortFieldStr, String sortOrderStr) {
+        SortField sortField = Optional.ofNullable(sortFieldStr)
+                .map(String::toUpperCase)
+                .map(SortField::valueOf)
+                .orElse(null);
+        SortOrder sortOrder = Optional.ofNullable(sortOrderStr)
+                .map(String::toUpperCase)
+                .map(SortOrder::valueOf)
+                .orElse(null);
+
+        List<Product> products = productDao.findProducts(query, sortField, sortOrder);
+
         if (query != null && !query.isEmpty()) {
             String[] splitQuery = query.split(" ");
             products = products.stream()
@@ -81,6 +98,20 @@ public class ProductServiceImpl implements ProductService {
                     .sorted(Comparator.comparingInt(SearchResult::getRelevance).reversed())
                     .map(SearchResult::getProduct)
                     .toList();
+        } else {
+            /* Сортировка работает только если нет поиска по Description */
+            if (sortField != null && sortOrder != null) {
+                Comparator<Product> comparator = Optional.ofNullable(comparators.get(sortField))
+                        .orElse( comparators.get(SortField.DEFAULT));
+                if (comparator != null) {
+                    if (sortOrder == SortOrder.DESC) {
+                        comparator = comparator.reversed();
+                    }
+                    products = products.stream()
+                            .sorted(comparator)
+                            .toList();
+                }
+            }
         }
 
         if (minPrice != null && !minPrice.isEmpty()) {
@@ -96,6 +127,7 @@ public class ProductServiceImpl implements ProductService {
                     .filter(product -> product.getPrice().compareTo(bigDecimalMaxPrice) <= 0)
                     .toList();
         }
+
 
         return products;
     }

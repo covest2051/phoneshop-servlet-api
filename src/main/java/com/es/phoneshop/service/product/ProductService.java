@@ -12,7 +12,7 @@ public interface ProductService {
 
     List<Product> findProducts(String query, String sortFieldStr, String sortOrderStr);
 
-    List<Product> advancedFindProducts(String query, String match, String minPrice, String maxPrice);
+    List<Product> advancedFindProducts(String query, String match, String minPrice, String maxPrice, String sortFieldStr, String sortOrderStr);
 
     void save(Product product);
 

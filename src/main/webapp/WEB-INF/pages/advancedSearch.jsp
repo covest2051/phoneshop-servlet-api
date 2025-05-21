@@ -46,9 +46,53 @@
             <table>
                 <thead>
                 <tr>
-                    <th>Image</th>
-                    <th>Description</th>
-                    <th>Price</th>
+                    <td>Image</td>
+                    <td>
+                        Description
+                        <c:url value="" var="sortAscDescription">
+                            <c:param name="sort" value="description"/>
+                            <c:param name="order" value="asc"/>
+                            <c:forEach items="${param}" var="entry">
+                                <c:if test="${entry.key != 'sort' && entry.key != 'order'}">
+                                    <c:param name="${entry.key}" value="${entry.value}"/>
+                                </c:if>
+                            </c:forEach>
+                        </c:url>
+                        <c:url value="" var="sortDescDescription">
+                            <c:param name="sort" value="description"/>
+                            <c:param name="order" value="desc"/>
+                            <c:forEach items="${param}" var="entry">
+                                <c:if test="${entry.key != 'sort' && entry.key != 'order'}">
+                                    <c:param name="${entry.key}" value="${entry.value}"/>
+                                </c:if>
+                            </c:forEach>
+                        </c:url>
+                        <a href="${sortAscDescription}">▲</a>
+                        <a href="${sortDescDescription}">▼</a>
+                    </td>
+                    <td class="price">
+                        Price
+                        <c:url value="" var="sortAscPrice">
+                            <c:param name="sort" value="price"/>
+                            <c:param name="order" value="asc"/>
+                            <c:forEach items="${param}" var="entry">
+                                <c:if test="${entry.key != 'sort' && entry.key != 'order'}">
+                                    <c:param name="${entry.key}" value="${entry.value}"/>
+                                </c:if>
+                            </c:forEach>
+                        </c:url>
+                        <c:url value="" var="sortDescPrice">
+                            <c:param name="sort" value="price"/>
+                            <c:param name="order" value="desc"/>
+                            <c:forEach items="${param}" var="entry">
+                                <c:if test="${entry.key != 'sort' && entry.key != 'order'}">
+                                    <c:param name="${entry.key}" value="${entry.value}"/>
+                                </c:if>
+                            </c:forEach>
+                        </c:url>
+                        <a href="${sortAscPrice}">▲</a>
+                        <a href="${sortDescPrice}">▼</a>
+                    </td>
                 </tr>
                 </thead>
                 <tbody>
