@@ -37,3 +37,6 @@
 
 Скриншот со страницы http://localhost:8080/phoneshop/order/overview/d7167fde-4fa4-4bba-bc5e-5efdf2ed7e0f при оформлении заказа
 ![image](https://github.com/user-attachments/assets/0166d00b-d200-4871-acda-6e298782c55d)
+
+Скриншот карточки товара со страницы http://localhost:8080/phoneshop/products/4 с добавленными отзывами
+![image](https://github.com/user-attachments/assets/667dc59b-f6eb-4925-a2a7-dc101073aec8)
