@@ -1,4 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
@@ -451,7 +452,7 @@
             document.querySelectorAll('.cart-item').forEach((item, index) => {
                 item.style.opacity = '0';
                 item.style.transform = 'translateY(30px)';
-                
+
                 setTimeout(() => {
                     item.style.transition = 'all 0.6s ease';
                     item.style.opacity = '1';

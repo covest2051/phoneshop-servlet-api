@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
@@ -181,7 +181,7 @@
                 opacity: 0;
                 transition: opacity 0.3s ease;
             `;
-            
+
             modal.innerHTML = `
                 <div style="
                     background: white;
@@ -207,16 +207,16 @@
                     ">Close</button>
                 </div>
             `;
-            
+
             modal.className = 'quick-view-modal';
             document.body.appendChild(modal);
-            
+
             // Animate in
             setTimeout(() => {
                 modal.style.opacity = '1';
                 modal.querySelector('div').style.transform = 'scale(1)';
             }, 10);
-            
+
             // Close on background click
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
@@ -224,7 +224,7 @@
                 }
             });
         }
-        
+
         // Enhanced product card interactions
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.product-card').forEach(card => {
@@ -232,7 +232,7 @@
                     this.style.transform = 'translateY(-10px) rotateY(2deg)';
                     this.style.boxShadow = '0 20px 40px rgba(102, 126, 234, 0.3)';
                 });
-                
+
                 card.addEventListener('mouseleave', function() {
                     this.style.transform = 'translateY(0) rotateY(0)';
                     this.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.1)';
