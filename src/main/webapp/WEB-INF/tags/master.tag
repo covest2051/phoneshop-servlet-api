@@ -4,16 +4,75 @@
 <html>
 <head>
     <title>${pageTitle}</title>
-    <link href='http://fonts.googleapis.com/css?family=Lobster+Two' rel='stylesheet' type='text/css'>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.servletContext.contextPath}/styles/main.css">
+    <script>
+        // Simple animations and interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add smooth scrolling
+            document.documentElement.style.scrollBehavior = 'smooth';
+            
+            // Add loading animation to buttons
+            const buttons = document.querySelectorAll('button[type="submit"]');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.innerHTML = '⏳ Загрузка...';
+                    this.disabled = true;
+                });
+            });
+            
+            // Add number input validation
+            const numberInputs = document.querySelectorAll('input[type="number"]');
+            numberInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    if(this.value < 1) this.value = 1;
+                    if(this.value > 99) this.value = 99;
+                });
+            });
+            
+            // Add search input animation
+            const searchInput = document.querySelector('input[name="query"]');
+            if(searchInput) {
+                searchInput.addEventListener('focus', function() {
+                    this.style.transform = 'scale(1.02)';
+                });
+                searchInput.addEventListener('blur', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            }
+            
+            // Add cart update animation
+            const cartBadge = document.querySelector('.cart-badge');
+            if(cartBadge) {
+                // Animate cart updates
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if(mutation.type === 'childList' || mutation.type === 'characterData') {
+                            cartBadge.style.transform = 'scale(1.2)';
+                            setTimeout(() => {
+                                cartBadge.style.transform = 'scale(1)';
+                            }, 200);
+                        }
+                    });
+                });
+                observer.observe(cartBadge, { childList: true, subtree: true, characterData: true });
+            }
+        });
+    </script>
 </head>
 <body class="product-list">
 <header>
     <a href="${pageContext.servletContext.contextPath}">
         <img src="${pageContext.servletContext.contextPath}/images/logo.svg"/>
-        PhoneShop
+        <span class="logo">📱 PhoneShop</span>
     </a>
-    <jsp:include page="/cart/minicart"/>
+    <div class="cart-badge">
+        <jsp:include page="/cart/minicart"/>
+    </div>
 </header>
 <main>
     <jsp:doBody/>
