@@ -6,72 +6,68 @@
 <jsp:useBean id="products" type="java.util.List" scope="request"/>
 <tags:master pageTitle="Product List">
     <p>
-        Welcome to Expert-Soft training!
+        🛒 Добро пожаловать в современный PhoneShop!
     </p>
     <form>
-        <input name="query" value="${param.query}">
-        <button>Search</button>
+        <input name="query" value="${param.query}" placeholder="🔍 Поиск товаров...">
+        <button>Найти</button>
     </form>
-    <table>
-        <thead>
-        <tr>
-            <td>Image</td>
-            <td>
-                Description
+    
+    <!-- Sorting Controls -->
+    <div style="text-align: center; margin: 2rem 0;">
+        <div style="display: inline-flex; gap: 2rem; padding: 1rem; background: rgba(255,255,255,0.9); border-radius: 50px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-weight: 600;">Описание:</span>
                 <c:choose>
                     <c:when test="${not empty param.query}">
-                        <a href="?sort=description&order=asc&query=${param.query}">▲</a>
-                        <a href="?sort=description&order=desc&query=${param.query}">▼</a>
+                        <a href="?sort=description&order=asc&query=${param.query}" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #667eea; color: white;">↑</a>
+                        <a href="?sort=description&order=desc&query=${param.query}" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #667eea; color: white;">↓</a>
                     </c:when>
                     <c:otherwise>
-                        <a href="?sort=description&order=asc">▲</a>
-                        <a href="?sort=description&order=desc">▼</a>
+                        <a href="?sort=description&order=asc" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #667eea; color: white;">↑</a>
+                        <a href="?sort=description&order=desc" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #667eea; color: white;">↓</a>
                     </c:otherwise>
                 </c:choose>
-            </td>
-            <td class="price">
-                Price
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-weight: 600;">Цена:</span>
                 <c:choose>
                     <c:when test="${not empty param.query}">
-                        <a href="?sort=price&order=asc&query=${param.query}">▲</a>
-                        <a href="?sort=price&order=desc&query=${param.query}">▼</a>
+                        <a href="?sort=price&order=asc&query=${param.query}" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #667eea; color: white;">↑</a>
+                        <a href="?sort=price&order=desc&query=${param.query}" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #667eea; color: white;">↓</a>
                     </c:when>
                     <c:otherwise>
-                        <a href="?sort=price&order=asc">▲</a>
-                        <a href="?sort=price&order=desc">▼</a>
+                        <a href="?sort=price&order=asc" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #667eea; color: white;">↑</a>
+                        <a href="?sort=price&order=desc" style="text-decoration: none; padding: 4px 8px; border-radius: 4px; background: #667eea; color: white;">↓</a>
                     </c:otherwise>
                 </c:choose>
-            </td>
-            <td>
-                Quantity
-            </td>
-        </tr>
-        </thead>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Product Grid -->
+    <div class="product-table">
         <c:forEach var="product" items="${products}">
-            <tr>
-                <td>
-                    <img class="product-tile" src="${product.imageUrl}">
-                </td>
-                <td>
+            <div class="product-card">
+                <img class="product-image" src="${product.imageUrl}" alt="${product.description}">
+                <div class="product-title">
                     <a href="/phoneshop/products/${product.id}">
-                            ${product.description}
+                        ${product.description}
                     </a>
-                </td>
-                <td class="price">
+                </div>
+                <div class="product-price">
                     <a href="/phoneshop/products/priceHistory/${product.id}">
                         <fmt:formatNumber value="${product.price}" type="currency"
                                           currencySymbol="${product.currency.symbol}"/>
                     </a>
-                </td>
-                <td>
-                    <form method="post" action="${pageContext.request.contextPath}/products/${product.id}">
-                        <input type="number" name="quantity" value="1">
-                        <button type="submit">Add to cart</button>
-                    </form>
-                </td>
-            </tr>
+                </div>
+                <form method="post" action="${pageContext.request.contextPath}/products/${product.id}" class="product-actions">
+                    <input type="number" name="quantity" value="1" min="1" max="99" class="quantity-input">
+                    <button type="submit" class="add-to-cart-btn">🛒 В корзину</button>
+                </form>
+            </div>
         </c:forEach>
-    </table>
+    </div>
     <c:if test="${not empty sessionScope.viewHistory}">
         <h2>Recently viewed</h2>
         <table>
