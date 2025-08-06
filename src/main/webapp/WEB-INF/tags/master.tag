@@ -20,8 +20,15 @@
             const buttons = document.querySelectorAll('button[type="submit"]');
             buttons.forEach(button => {
                 button.addEventListener('click', function() {
+                    const originalText = this.innerHTML;
                     this.innerHTML = '⏳ Загрузка...';
                     this.disabled = true;
+                    
+                    // Re-enable after delay for demo
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.disabled = false;
+                    }, 2000);
                 });
             });
             
@@ -61,8 +68,21 @@
                 });
                 observer.observe(cartBadge, { childList: true, subtree: true, characterData: true });
             }
+            
+            // Add product card hover effects
+            const productCards = document.querySelectorAll('.product-card');
+            productCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-12px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
         });
     </script>
+    <script src="${pageContext.servletContext.contextPath}/scripts/modern-enhancements.js"></script>
 </head>
 <body class="product-list">
 <header>
