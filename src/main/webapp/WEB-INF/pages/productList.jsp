@@ -69,19 +69,23 @@
         </c:forEach>
     </div>
     <c:if test="${not empty sessionScope.viewHistory}">
-        <h2>Recently viewed</h2>
+        <h2>🕒 Недавно просмотренные товары</h2>
         <table>
             <tr>
                 <c:forEach var="product" items="${sessionScope.viewHistory}">
-                    <td style="text-align: center; vertical-align: top;">
-                        <img class="product-tile" src="${product.imageUrl}"/><br/>
-                        <a href="/phoneshop/products/${product.id}">
+                    <td>
+                        <img class="product-tile" src="${product.imageUrl}"/>
+                        <div style="margin: 0.5rem 0; font-weight: 600;">
+                            <a href="/phoneshop/products/${product.id}" style="text-decoration: none; color: #667eea;">
                                 ${product.description}
-                        </a><br/>
-                        <a href="/phoneshop/products/priceHistory/${product.id}">
-                            <fmt:formatNumber value="${product.price}" type="currency"
-                                              currencySymbol="${product.currency.symbol}"/>
-                        </a>
+                            </a>
+                        </div>
+                        <div style="font-weight: 700; color: #ff6b6b;">
+                            <a href="/phoneshop/products/priceHistory/${product.id}" style="text-decoration: none; color: inherit;">
+                                <fmt:formatNumber value="${product.price}" type="currency"
+                                                  currencySymbol="${product.currency.symbol}"/>
+                            </a>
+                        </div>
                     </td>
                 </c:forEach>
             </tr>
