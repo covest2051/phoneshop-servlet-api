@@ -37,8 +37,5 @@ Screenshot from the cart page http://localhost:8080/phoneshop/cart
 <img width="1092" height="1110" alt="image" src="https://github.com/user-attachments/assets/378152ed-7491-496d-af05-90b8914724a5" />
 
 
-Screenshot from the page http://localhost:8080/phoneshop/order/overview/d7167fde-4fa4-4bba-bc5e-5efdf2ed7e0f 
-![image](https://github.com/user-attachments/assets/0166d00b-d200-4871-acda-6e298782c55d)
-
-Screenshot from the page http://localhost:8080/phoneshop/products/4
-![image](https://github.com/user-attachments/assets/667dc59b-f6eb-4925-a2a7-dc101073aec8)
+Screenshot from the page http://localhost:8080/phoneshop/products?query=Samsung
+<img width="1093" height="1152" alt="image" src="https://github.com/user-attachments/assets/47d38ac8-3c53-4049-bcd8-1d9a03192e40" />
