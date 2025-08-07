@@ -29,14 +29,16 @@ This project is an online store implemented in Java using JSP, servlets, and rel
 
 To go to the shopping cart, use URL: http://localhost:8080/phoneshop/cart.
 
-Screenshot from the page http://localhost:8080/phoneshop/products
-<img width="734" height="936" alt="image" src="https://github.com/user-attachments/assets/9f27e576-d232-4f18-85c4-9e34a0e3646e" />
+Screenshot from the main page http://localhost:8080/phoneshop/products
+<img width="718" height="945" alt="image" src="https://github.com/user-attachments/assets/b588ea56-2729-47fc-8044-5798965326fb" />
 
-Screenshot from the page http://localhost:8080/phoneshop/cart при добавлении двух товаров
-![image](https://github.com/user-attachments/assets/c41036aa-500f-4cd5-bce4-1341b0aaf7f8)
 
-Screenshot from the page http://localhost:8080/phoneshop/order/overview/d7167fde-4fa4-4bba-bc5e-5efdf2ed7e0f при оформлении заказа
+Screenshot from the cart page http://localhost:8080/phoneshop/cart
+<img width="1092" height="1110" alt="image" src="https://github.com/user-attachments/assets/378152ed-7491-496d-af05-90b8914724a5" />
+
+
+Screenshot from the page http://localhost:8080/phoneshop/order/overview/d7167fde-4fa4-4bba-bc5e-5efdf2ed7e0f 
 ![image](https://github.com/user-attachments/assets/0166d00b-d200-4871-acda-6e298782c55d)
 
-Screenshot from the page http://localhost:8080/phoneshop/products/4 с добавленными отзывами
+Screenshot from the page http://localhost:8080/phoneshop/products/4
 ![image](https://github.com/user-attachments/assets/667dc59b-f6eb-4925-a2a7-dc101073aec8)
